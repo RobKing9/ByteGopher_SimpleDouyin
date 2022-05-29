@@ -21,7 +21,7 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		user := douyin.Group("/user")
 		{
 			//用户信息
-			user.GET("/", controler.Info)
+			user.GET("/", middleware.AuthMiddleware(), controler.Info)
 			//用户登录接口
 			user.POST("/login", controler.Login)
 			//用户注册接口
@@ -31,7 +31,7 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		publish := douyin.Group("/publish")
 		{
 			publish.GET("/action")
-			publish.GET("/list",middleware.JwtAuthWithUserId(),controler.PublishList)
+			publish.GET("/list")
 		}
 
 		/*
@@ -58,11 +58,10 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 			扩展接口—II
 		*/
 		relation := douyin.Group("/relation")
-		relation.Use(middleware.JwtAuthWithUserId())
 		{
-			relation.POST("/action",controler.Action)
-			relation.GET("/follow/list",controler.FollowList)
-			relation.GET("/follower/list",controler.FollowerList)
+			relation.GET("/action")
+			relation.GET("/follow/list")
+			relation.GET("/follower/list")
 		}
 	}
 	return r
