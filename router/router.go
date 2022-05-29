@@ -29,7 +29,7 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		//发布视频接口
 		publish := douyin.Group("/publish")
 		{
-			publish.GET("/action")
+			publish.GET("/action", controler.VideoUpload)
 			publish.GET("/list")
 		}
 

@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8399589d-3dae-4248-9f48-039ec55b7a7b" name="Changes" comment="upload video route" />
+    <list default="true" id="8399589d-3dae-4248-9f48-039ec55b7a7b" name="Changes" comment="update">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controler/publish.go" beforeDir="false" afterPath="$PROJECT_DIR$/controler/publish.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dao/mysql.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/mysql.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/publish.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/publish.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router/router.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/deleteFile.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/deleteFile.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/qiniuUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/qiniuUpload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/randNum.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/randNum.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

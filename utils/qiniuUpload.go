@@ -15,6 +15,7 @@ type MyPutRet struct {
 	Name   string
 }
 
+// 七牛云上传，传入保存路径和本地的文件路径，返回云端路径
 func QiniuUpload(key string, localFile string) (string, error) {
 	// 2022-05-29 ak sk
 	accessKey := "wE80HFtKd7peofqpwynEKFMJAFJgDsHm9AH0FT5v"
