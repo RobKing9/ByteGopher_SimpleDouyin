@@ -1,4 +1,4 @@
-package dao
+package model
 
 /*
 	dao包
@@ -7,6 +7,7 @@ package dao
 
 import (
 	"fmt"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
