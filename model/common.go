@@ -5,10 +5,6 @@ package model
 const (
 	SCodeSuccess	= 0	// 状态返回成功
 	SCodeFalse		= 1	// 状态返回失败
-
-	FansList		= "fans"		// 粉丝列表类型
-	FollowList		= "follow"		// 关注列表类型
-
 )
 
 type Response struct {

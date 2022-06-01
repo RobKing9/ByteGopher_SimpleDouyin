@@ -1,8 +1,6 @@
 package dao
 
-import (
-	"ByteGopher_SimpleDouyin/model"
-)
+import "ByteGopher_SimpleDouyin/model"
 
 type UserModel struct {
 	model.User	`gorm:"embedded"`
@@ -26,7 +24,6 @@ func (u *UserModel) SearchUser(user, pwd string) (model.User,error) {
 	var _ = pwd
 
 	tx := GetDB().Where("user_name = ?",user).Table("user").Find(&usr)
-
 	return usr,tx.Error
 }
 
