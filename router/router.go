@@ -2,6 +2,7 @@ package router
 
 import (
 	"ByteGopher_SimpleDouyin/controler"
+	"ByteGopher_SimpleDouyin/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,8 +30,8 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		//发布视频接口
 		publish := douyin.Group("/publish")
 		{
-			publish.GET("/action", controler.VideoUpload)
-			publish.GET("/list")
+			publish.GET("/action")
+			publish.GET("/list",middleware.JwtAuthWithUserId(),controler.PublishList)
 		}
 
 		/*
@@ -57,10 +58,11 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 			扩展接口—II
 		*/
 		relation := douyin.Group("/relation")
+		relation.Use(middleware.JwtAuthWithUserId())
 		{
-			relation.GET("/action")
-			relation.GET("/follow/list")
-			relation.GET("/follower/list")
+			relation.POST("/action",controler.Action)
+			relation.GET("/follow/list",controler.FollowList)
+			relation.GET("/follower/list",controler.FollowerList)
 		}
 	}
 	return r
