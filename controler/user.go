@@ -43,7 +43,6 @@ func LoginService(req *LoginRequest) UserLoginResponse {
 		}
 	}
 
-	//fmt.Printf("%#v",usr)
 
 	// 生成token
 	token, err := jwtTool.JwtGenerateToken(&usr, time.Second*120)
@@ -61,7 +60,7 @@ func LoginService(req *LoginRequest) UserLoginResponse {
 	// 明确缓存过期时间
 	// 用户主动退出等登录后删除
 	//cache.Cache.CacheToken(token,usr)
-	dao.GetTestData(usr.UserId)
+	//dao.GetTestData(usr.UserId)
 
 	return UserLoginResponse{
 		Response:model.Response{
