@@ -1,6 +1,9 @@
-package dao
+package cache
+
+/*若无 redis 临时测试用 */
 
 import (
+	"ByteGopher_SimpleDouyin/dao"
 	"ByteGopher_SimpleDouyin/model"
 	"sync"
 )
@@ -54,7 +57,7 @@ func Follow(toUserId,userId int64,actionType int32) error {
 	defer mu.Unlock()
 
 	// 获取自身信息
-	user,err := NewUserModel().SearchUserById(userId)
+	user,err := dao.NewUserModel().SearchUserById(userId)
 	if err != nil {
 		return err
 	}
