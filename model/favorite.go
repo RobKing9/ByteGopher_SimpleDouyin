@@ -1,6 +1,9 @@
 package model
 
-import "database/sql"
+import (
+	"ByteGopher_SimpleDouyin/dao"
+	"database/sql"
+)
 
 type FavoriteModel struct {
 	VideoID int           `gorm:"column:video_id;primaryKey;unique;not null" json:"video_id"`
@@ -14,10 +17,12 @@ func (model *FavoriteModel) TableName() string {
 }
 
 func AddFavoriteModel(m *FavoriteModel) error {
+	db := dao.GetDB()
 	return db.Save(m).Error
 }
 
 func DeleteFavoriteModelByID(id int) (bool, error) {
+	db := dao.GetDB()
 	if err := db.Delete(&FavoriteModel{}, id).Error; err != nil {
 		return false, err
 	}
@@ -25,6 +30,7 @@ func DeleteFavoriteModelByID(id int) (bool, error) {
 }
 
 func DeleteFavoriteModel(condition string, args ...interface{}) (int64, error) {
+	db := dao.GetDB()
 	if err := db.Where(condition, args...).Delete(&FavoriteModel{}).Error; err != nil {
 		return 0, err
 	}
@@ -32,10 +38,12 @@ func DeleteFavoriteModel(condition string, args ...interface{}) (int64, error) {
 }
 
 func UpdateFavoriteModel(m *FavoriteModel) error {
+	db := dao.GetDB()
 	return db.Save(m).Error
 }
 
 func GetFavoriteModelByID(id int) (*FavoriteModel, error) {
+	db := dao.GetDB()
 	var m FavoriteModel
 	if err := db.First(&m, id).Error; err != nil {
 		return nil, err
@@ -44,6 +52,7 @@ func GetFavoriteModelByID(id int) (*FavoriteModel, error) {
 }
 
 func GetFavoriteModels(condition string, args ...interface{}) ([]*FavoriteModel, error) {
+	db := dao.GetDB()
 	res := make([]*FavoriteModel, 0)
 	if err := db.Where(condition, args...).Find(&res).Error; err != nil {
 		return nil, err

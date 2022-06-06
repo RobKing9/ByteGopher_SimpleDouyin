@@ -4,6 +4,7 @@ import (
 	"ByteGopher_SimpleDouyin/dao"
 	"ByteGopher_SimpleDouyin/model"
 	"ByteGopher_SimpleDouyin/utils"
+	"ByteGopher_SimpleDouyin/utils/jwtTool"
 	"strconv"
 
 	//"encoding/json"
@@ -38,8 +39,8 @@ func makeVideo(id int64, author model.User, playUrl string, coverURl string, fav
 	return model.Video{
 		Id:            id,
 		Author:        author,
-		PlayUrl:       playUrl,
-		CoverUrl:      coverURl,
+		PlayURL:       playUrl,
+		CoverURL:      coverURl,
 		FavoriteCount: favoriteCount,
 		CommentCount:  commentCount,
 		IsFavorite:    isFavorite,
@@ -59,14 +60,22 @@ func VideoUpload(c *gin.Context) {
 	IsFavorite := false
 
 	var testVideo model.Video
-	var user model.User
 
 	db := dao.GetDB()
 
 	// TODO: 判断上传的视频文件是否为mp4格式
 
 	// TODO: 对token做鉴权 根据token获取用户
-	user = GetUserFromToken(token)
+	var user, err = jwtTool.JwtParseUser(token)
+	if err != nil {
+		res := RespVideoList{
+			StatusCode: -1,
+			StatusMsg:  err.Error(),
+			VideoList:  videoList,
+		}
+		c.JSON(200, res)
+		return
+	}
 
 	// 判断id是否存在 若已存在则重新生成
 	for {
@@ -130,9 +139,17 @@ func VideoList(c *gin.Context) {
 	var videoList []model.Video
 	db := dao.GetDB()
 
-	// TODO: 对token做鉴权 根据token获取用户
-	var user model.User
-	user = GetUserFromToken(token)
+	//var user model.User
+	var user, err = jwtTool.JwtParseUser(token)
+	if err != nil {
+		res := RespVideoList{
+			StatusCode: -1,
+			StatusMsg:  err.Error(),
+			VideoList:  videoList,
+		}
+		c.JSON(200, res)
+		return
+	}
 
 	// 根据token获取的用户的user id和传入的user id 不一致，直接return 防止越权漏洞
 	if user.UserId != userIDint {
@@ -166,4 +183,5 @@ func VideoList(c *gin.Context) {
 	}
 	c.JSON(200, res)
 }
-// need to fix 
+
+// need to fix

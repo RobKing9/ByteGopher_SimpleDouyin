@@ -49,6 +49,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	//返回token
+	// TODO: releaseToken
 	token, err := utils.ReleaseToken(u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "系统异常！"})

@@ -4,21 +4,17 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a4ea25a-d8b4-47d3-bc0b-c58ac449a0c8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2022_6_6_17_47_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2022_6_6_17_47__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="d93dd20b-7cfa-4492-ab0d-12da60b47ba0" name="Changes" comment="c">
+      <change beforePath="$PROJECT_DIR$/.idea/ByteGopher_SimpleDouyin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ByteGopher_SimpleDouyin.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/mysql.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/mysql.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/mysql_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controler/publish.go" beforeDir="false" afterPath="$PROJECT_DIR$/controler/publish.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controler/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/controler/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controler/usercontroler.go" beforeDir="false" afterPath="$PROJECT_DIR$/controler/usercontroler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/middleware/AuthMiddleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/AuthMiddleware.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/mysql_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/jwtTool/jwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/jwtTool/jwt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/jwtTool/jwt_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/jwtTool/jwt_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middleware/redis.go" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/redis.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/favorite.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/favorite.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/follow.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/follow.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router/router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,12 +23,17 @@
   </component>
   <component name="GOROOT" url="file://$USER_HOME$/sdk/go1.18.3" />
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="feature-relation" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2ACcim1daowkJUjzTfsFMyuwBrc" />
+  <component name="ProjectId" id="2ACfZo53TUyIoePW3bksD8Gc4QQ" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -86,6 +87,9 @@
       <list>
         <item itemvalue="Go Test.TestJwtParseUser in ByteGopher_SimpleDouyin/utils/jwtTool" />
         <item itemvalue="Go Test.TestJwtGenerateToken in ByteGopher_SimpleDouyin/utils/jwtTool" />
+        <item itemvalue="Go Test.TestJwtParseUser in ByteGopher_SimpleDouyin/utils/jwtTool" />
+        <item itemvalue="Go Test.TestJwtGenerateToken in ByteGopher_SimpleDouyin/utils/jwtTool" />
+        <item itemvalue="Go Test.TestJwtParseUser in ByteGopher_SimpleDouyin/utils/jwtTool" />
       </list>
     </recent_temporary>
   </component>
@@ -103,6 +107,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="c" />
+    <option name="LAST_COMMIT_MESSAGE" value="c" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
