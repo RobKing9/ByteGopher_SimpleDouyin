@@ -11,8 +11,6 @@ require (
 	github.com/qiniu/go-sdk/v7 v7.12.1
 	github.com/stretchr/testify v1.7.2
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
-	gorm.io/driver/mysql v1.3.4
-	gorm.io/gorm v1.23.5
 )
 
 require (
