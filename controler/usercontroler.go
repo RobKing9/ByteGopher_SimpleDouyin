@@ -3,11 +3,12 @@ package controler
 import (
 	"ByteGopher_SimpleDouyin/dao"
 	"ByteGopher_SimpleDouyin/model"
-	"ByteGopher_SimpleDouyin/utils"
+	"ByteGopher_SimpleDouyin/utils/jwtTool"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
+	"time"
 )
 
 // Info 用户信息
@@ -36,7 +37,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	//判断手机号是否存在
-	var u model.User
+	var u *model.User
 	db.Where("username=?", username).First(&u)
 	if len(u.UserName) == 0 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "该用户未注册！"})
@@ -50,7 +51,7 @@ func Login(c *gin.Context) {
 	}
 	//返回token
 	// TODO: releaseToken
-	token, err := utils.ReleaseToken(u)
+	token, err := jwtTool.JwtGenerateToken(u, time.Hour*24*365)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "系统异常！"})
 		log.Println("系统异常 err=", err.Error())
