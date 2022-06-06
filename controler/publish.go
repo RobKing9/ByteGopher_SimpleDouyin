@@ -71,7 +71,6 @@ func VideoUpload(c *gin.Context) {
 		res := RespVideoList{
 			StatusCode: -1,
 			StatusMsg:  err.Error(),
-			VideoList:  videoList,
 		}
 		c.JSON(200, res)
 		return
@@ -107,7 +106,7 @@ func VideoUpload(c *gin.Context) {
 		return
 	}
 
-	video := makeVideo(int64(id), user, retKey, coverUrl, FavoriteCount, CommentCount, IsFavorite, title)
+	video := makeVideo(int64(id), *user, retKey, coverUrl, FavoriteCount, CommentCount, IsFavorite, title)
 
 	// 插入数据到数据库
 	result := db.Create(&video)
@@ -152,7 +151,7 @@ func VideoList(c *gin.Context) {
 	}
 
 	// 根据token获取的用户的user id和传入的user id 不一致，直接return 防止越权漏洞
-	if user.UserId != userIDint {
+	if userIDint != (*user).UserId {
 		res := RespVideoList{
 			StatusCode: -1,
 			StatusMsg:  "user id not match",
@@ -183,5 +182,3 @@ func VideoList(c *gin.Context) {
 	}
 	c.JSON(200, res)
 }
-
-// need to fix
