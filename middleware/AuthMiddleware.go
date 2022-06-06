@@ -5,12 +5,12 @@ package middleware
 */
 
 import (
+	"ByteGopher_SimpleDouyin/model"
+	"ByteGopher_SimpleDouyin/utils/jwtTool"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"strings"
-
-	"ByteGopher_SimpleDouyin/model"
-	"ByteGopher_SimpleDouyin/utils/jwtTool"
 )
 
 const (
