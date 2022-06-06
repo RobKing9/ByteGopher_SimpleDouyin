@@ -4,24 +4,19 @@ package middleware
 	middleware包 存放中间价
 */
 
-
 import (
 	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/gin-gonic/gin"
-
 	"ByteGopher_SimpleDouyin/model"
 	"ByteGopher_SimpleDouyin/utils/jwtTool"
 )
 
-
 const (
 	contextKeyUserObj = "authedUserObj"
-	bearerLength = len("Bearer ")
+	bearerLength      = len("Bearer ")
 )
-
 
 // JwtAuthWithUserId 从 url-query 的 token 获取 JWTString 或者从请求头 Authorization 中获取 JWTString
 //
@@ -34,24 +29,24 @@ const (
 func JwtAuthWithUserId() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		// 从 url 中获取 user_id
-		userId, err := strconv.ParseInt(c.Query("user_id"),0,64)
+		userId, err := strconv.ParseInt(c.Query("user_id"), 0, 64)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusPreconditionFailed,
 				model.Response{
 					StatusCode: model.SCodeFalse,
-					StatusMsg: "no userid",
+					StatusMsg:  "no userid",
 				})
 			return
 		}
 
 		token, ok := c.GetQuery("token")
-		if !ok {	// 或者从请求头 Authorization 中获取 JWTString
+		if !ok { // 或者从请求头 Authorization 中获取 JWTString
 			hToken := c.GetHeader("Authorization")
 			if len(hToken) < bearerLength {
 				c.AbortWithStatusJSON(http.StatusPreconditionFailed,
 					model.Response{
 						StatusCode: model.SCodeFalse,
-						StatusMsg: "header Authorization has not Bearer token",
+						StatusMsg:  "header Authorization has not Bearer token",
 					})
 				return
 			}
@@ -64,7 +59,7 @@ func JwtAuthWithUserId() func(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusPreconditionFailed,
 				model.Response{
 					StatusCode: model.SCodeFalse,
-					StatusMsg: "no permission",
+					StatusMsg:  "no permission",
 				})
 			return
 		}
@@ -74,7 +69,7 @@ func JwtAuthWithUserId() func(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusPreconditionFailed,
 				model.Response{
 					StatusCode: model.SCodeFalse,
-					StatusMsg: "userid not match token",
+					StatusMsg:  "userid not match token",
 				})
 			return
 		}

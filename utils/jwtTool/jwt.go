@@ -12,11 +12,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
-
 	"ByteGopher_SimpleDouyin/model"
+	"github.com/dgrijalva/jwt-go"
 )
-
 
 // AppSecret 作为 token 验证时的密钥
 //
@@ -28,13 +26,11 @@ var AppSecret = "test"
 // 这个值会被viper.GetString重写
 var AppIss = "test"
 
-
 // 自定义payload结构体,不建议直接使用 dgrijalva/jwtTool-go `jwtTool.StandardClaims`结构体.
 type userStdClaims struct {
 	jwt.StandardClaims
 	*model.User
 }
-
 
 // Valid 实现 `type Claims interface` 的 `Valid() error` 方法
 //
@@ -42,12 +38,12 @@ type userStdClaims struct {
 func (c userStdClaims) Valid() (err error) {
 	// 验证 token 是否过期
 	if c.VerifyExpiresAt(time.Now().Unix(), true) == false {
-		return  errors.New("token is expired")
+		return errors.New("token is expired")
 	}
 
 	// 核实发行人是否正确
 	if !c.VerifyIssuer(AppIss, true) {
-		return  errors.New("token's issuer is wrong")
+		return errors.New("token's issuer is wrong")
 	}
 
 	// 其他自定义核实
@@ -56,7 +52,6 @@ func (c userStdClaims) Valid() (err error) {
 	}
 	return
 }
-
 
 // JwtGenerateToken 生成 token
 //
@@ -67,7 +62,7 @@ func (c userStdClaims) Valid() (err error) {
 // @return string	返回 JWT
 //
 // 例	JwtGenerateToken(m, time.Hour*24*365)
-func JwtGenerateToken(m *model.User,d time.Duration) (string, error) {
+func JwtGenerateToken(m *model.User, d time.Duration) (string, error) {
 	m.Password = ""
 	expireTime := time.Now().Add(d)
 
@@ -98,7 +93,7 @@ func JwtParseUser(tokenString string) (*model.User, error) {
 
 	claims := &userStdClaims{}
 
-	_, err := jwt.ParseWithClaims(tokenString, claims, /*KeyFunc*/func(token *jwt.Token) (interface{}, error) {
+	_, err := jwt.ParseWithClaims(tokenString, claims /*KeyFunc*/, func(token *jwt.Token) (interface{}, error) {
 
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])

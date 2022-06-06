@@ -1,41 +1,38 @@
 package jwtTool
 
 import (
+	"ByteGopher_SimpleDouyin/model"
 	"fmt"
 	"log"
 	"testing"
 	"time"
-
-	"ByteGopher_SimpleDouyin/model"
 )
 
 var user = &model.User{
-	UserId: 1111,
-	UserName: "admin",
-	Password: "admin",
-	FollowCount: 100,
+	UserId:        1111,
+	UserName:      "admin",
+	Password:      "admin",
+	FollowCount:   100,
 	FollowerCount: 100,
-
 }
 
 func TestJwtGenerateToken(t *testing.T) {
 
 	token, err := JwtGenerateToken(user, time.Second*60)
 	if err != nil {
-		log.Fatal("JGT Err:",err)
+		log.Fatal("JGT Err:", err)
 	}
-	fmt.Println("JGT:",token)
+	fmt.Println("JGT:", token)
 }
-
 
 func TestJwtParseUser(t *testing.T) {
 
 	token, _ := JwtGenerateToken(user, time.Second*60)
 	user, err := JwtParseUser(token)
 	if err != nil {
-		log.Fatal("JPC Err:",err)
+		log.Fatal("JPC Err:", err)
 	}
 
-	fmt.Printf("JPC:%#v",user)
+	fmt.Printf("JPC:%#v", user)
 
 }
