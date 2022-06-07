@@ -15,12 +15,13 @@ type Video struct {
 	IsFavorite    bool   `json:"is_favorite,omitempty"`
 }
 
+// omitempty会舍弃false
 type User struct {
 	Id            int64  `json:"id,omitempty"`
 	Name          string `json:"name,omitempty"`
 	FollowCount   int64  `json:"follow_count,omitempty"`
 	FollowerCount int64  `json:"follower_count,omitempty"`
-	IsFollow      bool   `json:"is_follow,omitempty"`
+	IsFollow      bool   `json:"is_follow"`
 }
 
 type FeedResponse struct {

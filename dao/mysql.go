@@ -15,8 +15,9 @@ import (
 var MysqlDb *gorm.DB
 
 func InitMysql() *gorm.DB {
+	var err error
 	dsn := "root:Byt3G0pheR51522zzwlwlbb@tcp(121.40.120.222:43306)/simpledouyin?charset=utf8mb4&parseTime=True&loc=Local"
-	MysqlDb, err := gorm.Open("mysql", dsn)
+	MysqlDb, err = gorm.Open("mysql", dsn)
 	if err != nil {
 		fmt.Println("gorm open failed:", err.Error())
 	}
@@ -24,7 +25,6 @@ func InitMysql() *gorm.DB {
 	// fmt.Println(MysqlDb)
 	return MysqlDb
 }
-
 func GetDB() *gorm.DB {
 	return MysqlDb
 }

@@ -18,7 +18,7 @@ func main() {
 	println(db)
 	//设置路由
 	r := gin.Default()
-	r = router.CollectRouter(r, db)
+	r = router.CollectRouter(r)
 	//启动路由
 	r.Run()
 }

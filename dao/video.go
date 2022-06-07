@@ -1,0 +1,62 @@
+package dao
+
+import (
+	"ByteGopher_SimpleDouyin/model"
+	"fmt"
+)
+
+type VideoDao interface{
+	GetVideoModels() ([]*model.VideoModel, error) 
+}
+
+type videoDao struct{}
+
+
+func NewVideoDao() VideoDao{
+	return &videoDao{}
+}
+
+// TableName sets the insert table name for this struct type
+func TableName() string {
+	return "video"
+}
+
+func AddVideoModel(m *model.VideoModel) error {
+	return MysqlDb.Save(m).Error
+}
+
+func DeleteVideoModelByID(id int) (bool, error) {
+	if err := MysqlDb.Delete(&model.VideoModel{}, id).Error; err != nil {
+		return false, err
+	}
+	return MysqlDb.RowsAffected > 0, nil
+}
+
+func DeleteVideoModel(condition string, args ...interface{}) (int64, error) {
+	if err := MysqlDb.Where(condition, args...).Delete(&model.VideoModel{}).Error; err != nil {
+		return 0, err
+	}
+	return MysqlDb.RowsAffected, nil
+}
+
+func UpdateVideoModel(m *model.VideoModel) error {
+	return MysqlDb.Save(m).Error
+}
+
+func GetVideoModelByID(id int) (*model.VideoModel, error) {
+	var m model.VideoModel
+	if err := MysqlDb.First(&m, id).Error; err != nil {
+		return nil, err
+	}
+	return &m, nil
+}
+
+func (dao *videoDao)GetVideoModels() ([]*model.VideoModel, error) {
+	res := make([]*model.VideoModel, 0)
+	fmt.Println(MysqlDb)
+	if err := MysqlDb.Table("video").Limit(30).Find(&res).Error; err != nil {
+		return nil, err
+	}
+	fmt.Println(" GetVideoModels success")
+	return res, nil
+}

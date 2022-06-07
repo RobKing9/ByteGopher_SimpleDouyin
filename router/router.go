@@ -5,13 +5,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 )
 
 /*
 	router包 用来封装路由
 */
-func CollectRouter(r *gin.Engine, db *gorm.DB) *gin.Engine {
+func CollectRouter(r *gin.Engine) *gin.Engine {
 	douyin := r.Group("/douyin")
 	{
 		/*test*/
@@ -26,7 +25,7 @@ func CollectRouter(r *gin.Engine, db *gorm.DB) *gin.Engine {
 			基础接口
 		*/
 		//视频流接口
-		douyin.GET("/feed", controller.NewVideoController(db).Feed)
+		douyin.GET("/feed", controller.NewVideoController().Feed)
 		//用户组
 		user := douyin.Group("/user")
 		{

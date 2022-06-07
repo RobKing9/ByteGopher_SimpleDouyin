@@ -1,35 +1,26 @@
 package service
 
 import (
+	"ByteGopher_SimpleDouyin/dao"
 	"ByteGopher_SimpleDouyin/model"
+	"fmt"
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
-
-// type feedService struct {
-// 	videoModel model.VideoModel
-// 	userModel  model.UserModel
-// 	// followModel model.FollowModel
-// }
-
-// func NewFeedService(videoModel model.VideoModel, userModel model.UserModel) *feedService {
-// 	return &feedService{
-// 		videoModel: videoModel,
-// 		userModel: userModel,
-// 	}
-// }
 
 type VideoService interface {
 		GetFeed() (model.FeedResponse, error)
 }
 
 type videoService struct {
-		db *gorm.DB
+		userDao dao.UserDao
+		videoDao dao.VideoDao
 }
 
-func NewVideoService(db *gorm.DB) VideoService {
-		return &videoService{db: db}
+func NewVideoService() VideoService {
+		return &videoService{
+			userDao: dao.NewUserDao(),
+			videoDao: dao.NewVideoDao(),
+		}
 }
 
 func (service videoService)GetFeed() (model.FeedResponse, error) {
@@ -37,9 +28,9 @@ func (service videoService)GetFeed() (model.FeedResponse, error) {
 	videoList := make([]model.Video, 0)
 	// var video model.Video
 	// var user model.User
-	videos, _ := model.GetVideoModels(service.db)
+	videos, _ := service.videoDao.GetVideoModels()
 	for _, v := range videos {
-			u, _ := model.GetUserModelByID(service.db, int(v.UserID.Int64))
+			u, _ := service.userDao.GetUserModelByID( int(v.UserID.Int64))
 			user := model.User{
 				Id: int64(u.UserID),
 				Name: u.UserName.String,
@@ -56,6 +47,7 @@ func (service videoService)GetFeed() (model.FeedResponse, error) {
 				CommentCount: v.CommentCount.Int64,
 				IsFavorite: true,
 			}
+			fmt.Println(video)
 			videoList = append(videoList, video)
 	}
 	return model.FeedResponse{
