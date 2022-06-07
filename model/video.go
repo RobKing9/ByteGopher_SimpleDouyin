@@ -1,9 +1,14 @@
 package model
 
 import (
+	"ByteGopher_SimpleDouyin/dao"
 	"database/sql"
+	"fmt"
 	"time"
+
+	"github.com/jinzhu/gorm"
 )
+
 
 type VideoModel struct {
 	VideoID       int            `gorm:"column:video_id;primaryKey;unique;not null;autoIncrement" json:"video_id"`
@@ -22,39 +27,41 @@ func (model *VideoModel) TableName() string {
 }
 
 func AddVideoModel(m *VideoModel) error {
-	return db.Save(m).Error
+	return dao.MysqlDb.Save(m).Error
 }
 
 func DeleteVideoModelByID(id int) (bool, error) {
-	if err := db.Delete(&VideoModel{}, id).Error; err != nil {
+	if err := dao.MysqlDb.Delete(&VideoModel{}, id).Error; err != nil {
 		return false, err
 	}
-	return db.RowsAffected > 0, nil
+	return dao.MysqlDb.RowsAffected > 0, nil
 }
 
 func DeleteVideoModel(condition string, args ...interface{}) (int64, error) {
-	if err := db.Where(condition, args...).Delete(&VideoModel{}).Error; err != nil {
+	if err := dao.MysqlDb.Where(condition, args...).Delete(&VideoModel{}).Error; err != nil {
 		return 0, err
 	}
-	return db.RowsAffected, nil
+	return dao.MysqlDb.RowsAffected, nil
 }
 
 func UpdateVideoModel(m *VideoModel) error {
-	return db.Save(m).Error
+	return dao.MysqlDb.Save(m).Error
 }
 
 func GetVideoModelByID(id int) (*VideoModel, error) {
 	var m VideoModel
-	if err := db.First(&m, id).Error; err != nil {
+	if err := dao.MysqlDb.First(&m, id).Error; err != nil {
 		return nil, err
 	}
 	return &m, nil
 }
 
-func GetVideoModels(condition string, args ...interface{}) ([]*VideoModel, error) {
+func GetVideoModels(db *gorm.DB) ([]*VideoModel, error) {
 	res := make([]*VideoModel, 0)
-	if err := db.Where(condition, args...).Find(&res).Error; err != nil {
+	fmt.Println(db)
+	if err := db.Table("video").Find(&res).Error; err != nil {
 		return nil, err
 	}
+	fmt.Println(" GetVideoModels success")
 	return res, nil
 }

@@ -1,9 +1,11 @@
 package model
 
 import (
+	"ByteGopher_SimpleDouyin/dao"
 	"database/sql"
 	"time"
 )
+
 
 type CommentModel struct {
 	CommentID  int            `gorm:"column:comment_id;primaryKey;unique;not null;autoIncrement" json:"comment_id"`
@@ -19,30 +21,30 @@ func (model *CommentModel) TableName() string {
 }
 
 func AddCommentModel(m *CommentModel) error {
-	return db.Save(m).Error
+	return dao.MysqlDb.Save(m).Error
 }
 
 func DeleteCommentModelByID(id int) (bool, error) {
-	if err := db.Delete(&CommentModel{}, id).Error; err != nil {
+	if err := dao.MysqlDb.Delete(&CommentModel{}, id).Error; err != nil {
 		return false, err
 	}
-	return db.RowsAffected > 0, nil
+	return dao.MysqlDb.RowsAffected > 0, nil
 }
 
 func DeleteCommentModel(condition string, args ...interface{}) (int64, error) {
-	if err := db.Where(condition, args...).Delete(&CommentModel{}).Error; err != nil {
+	if err := dao.MysqlDb.Where(condition, args...).Delete(&CommentModel{}).Error; err != nil {
 		return 0, err
 	}
-	return db.RowsAffected, nil
+	return dao.MysqlDb.RowsAffected, nil
 }
 
 func UpdateCommentModel(m *CommentModel) error {
-	return db.Save(m).Error
+	return dao.MysqlDb.Save(m).Error
 }
 
 func GetCommentModelByID(id int) (*CommentModel, error) {
 	var m CommentModel
-	if err := db.First(&m, id).Error; err != nil {
+	if err := dao.MysqlDb.First(&m, id).Error; err != nil {
 		return nil, err
 	}
 	return &m, nil
@@ -50,7 +52,7 @@ func GetCommentModelByID(id int) (*CommentModel, error) {
 
 func GetCommentModels(condition string, args ...interface{}) ([]*CommentModel, error) {
 	res := make([]*CommentModel, 0)
-	if err := db.Where(condition, args...).Find(&res).Error; err != nil {
+	if err := dao.MysqlDb.Where(condition, args...).Find(&res).Error; err != nil {
 		return nil, err
 	}
 	return res, nil

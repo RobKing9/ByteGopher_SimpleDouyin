@@ -1,5 +1,7 @@
 package model
 
+import "ByteGopher_SimpleDouyin/dao"
+
 type FollowModel struct {
 	UserID    int `gorm:"column:user_id;primaryKey;unique;not null" json:"user_id"`
 	FollwerID int `gorm:"column:follwer_id;primaryKey;unique;not null" json:"follwer_id"`
@@ -11,30 +13,30 @@ func (model *FollowModel) TableName() string {
 }
 
 func AddFollowModel(m *FollowModel) error {
-	return db.Save(m).Error
+	return dao.MysqlDb.Save(m).Error
 }
 
 func DeleteFollowModelByID(id int) (bool, error) {
-	if err := db.Delete(&FollowModel{}, id).Error; err != nil {
+	if err := dao.MysqlDb.Delete(&FollowModel{}, id).Error; err != nil {
 		return false, err
 	}
-	return db.RowsAffected > 0, nil
+	return dao.MysqlDb.RowsAffected > 0, nil
 }
 
 func DeleteFollowModel(condition string, args ...interface{}) (int64, error) {
-	if err := db.Where(condition, args...).Delete(&FollowModel{}).Error; err != nil {
+	if err := dao.MysqlDb.Where(condition, args...).Delete(&FollowModel{}).Error; err != nil {
 		return 0, err
 	}
-	return db.RowsAffected, nil
+	return dao.MysqlDb.RowsAffected, nil
 }
 
 func UpdateFollowModel(m *FollowModel) error {
-	return db.Save(m).Error
+	return dao.MysqlDb.Save(m).Error
 }
 
 func GetFollowModelByID(id int) (*FollowModel, error) {
 	var m FollowModel
-	if err := db.First(&m, id).Error; err != nil {
+	if err := dao.MysqlDb.First(&m, id).Error; err != nil {
 		return nil, err
 	}
 	return &m, nil
@@ -42,7 +44,7 @@ func GetFollowModelByID(id int) (*FollowModel, error) {
 
 func GetFollowModels(condition string, args ...interface{}) ([]*FollowModel, error) {
 	res := make([]*FollowModel, 0)
-	if err := db.Where(condition, args...).Find(&res).Error; err != nil {
+	if err := dao.MysqlDb.Where(condition, args...).Find(&res).Error; err != nil {
 		return nil, err
 	}
 	return res, nil

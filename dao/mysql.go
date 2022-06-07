@@ -1,4 +1,4 @@
-package model
+package dao
 
 /*
 	dao包
@@ -12,18 +12,19 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-var db *gorm.DB
+var MysqlDb *gorm.DB
 
 func InitMysql() *gorm.DB {
 	dsn := "root:Byt3G0pheR51522zzwlwlbb@tcp(121.40.120.222:43306)/simpledouyin?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open("mysql", dsn)
+	MysqlDb, err := gorm.Open("mysql", dsn)
 	if err != nil {
 		fmt.Println("gorm open failed:", err.Error())
 	}
-	return db
+	fmt.Println("gorm open success")
+	// fmt.Println(MysqlDb)
+	return MysqlDb
 }
 
 func GetDB() *gorm.DB {
-	db = InitMysql()
-	return db
+	return MysqlDb
 }

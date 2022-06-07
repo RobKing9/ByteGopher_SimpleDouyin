@@ -3,6 +3,7 @@ package main
 import (
 	"ByteGopher_SimpleDouyin/dao"
 	"ByteGopher_SimpleDouyin/router"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,10 +13,12 @@ import (
 
 func main() {
 	//初始化数据库
-	dao.InitMysql()
+	// dao.InitMysql()
+	db := dao.InitMysql()
+	println(db)
 	//设置路由
 	r := gin.Default()
-	r = router.CollectRouter(r)
+	r = router.CollectRouter(r, db)
 	//启动路由
-	r.Run(":")
+	r.Run()
 }
