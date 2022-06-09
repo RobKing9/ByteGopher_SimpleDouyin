@@ -23,24 +23,27 @@ type userController struct {
 	userDao dao.UserDao
 }
 
-func NewUserController() UserController{
+func NewUserController() UserController {
 	return &userController{
 		userDao: dao.NewUserDao(),
 	}
 }
 
+func (controller userController) Info(c *gin.Context) {
 
-func (controller userController)Info(c *gin.Context) {
 	user, _ := c.Get("user")
 	c.JSON(http.StatusOK, gin.H{
-		"data": gin.H{
-			"user": user,
-		},
+		"status_code": 0,
+		"status_msg":  "successful",
+		"user":        user,
+		//"user": gin.H{
+		//	"user":user,
+		//},
 	})
 }
 
 // Login 用户登录
-func (controller userController)Login(c *gin.Context) {
+func (controller userController) Login(c *gin.Context) {
 	//参数
 	username := c.Query("username")
 	pwd := c.Query("password")
@@ -57,34 +60,50 @@ func (controller userController)Login(c *gin.Context) {
 
 	u, err := controller.userDao.GetUserByName(username)
 	// db.Where("user_name=?", username).First(&u)
-	if  err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "该用户未注册！"})
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"status_code": -1,
+			"status_msg":  "该用户未注册!!!",
+			"user_id":     0,
+			"token":       0,
+		})
 		log.Println("该用户未注册")
 		return
 	}
 	//判断密码是否正确
 	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(pwd)); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "密码不正确！"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status_code": -1,
+			"status_msg":  "密码不正确!!!",
+			"user_id":     0,
+			"token":       0,
+		})
 		log.Println("密码不正确!")
 		return
 	}
 	//返回token
 	token, err := utils.ReleaseToken(u)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "系统异常！"})
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status_code": -1,
+			"status_msg":  "系统异常!!!",
+			"user_id":     0,
+			"token":       0,
+		})
 		log.Println("系统异常 err=", err.Error())
 		return
 	}
 	c.JSON(200, gin.H{
-		"token": token,
-		"msg":   "登录成功!!!",
+		"status_code": 0,
+		"status_msg":  "登录成功!!!",
+		"user_id":     u.UserID,
+		"token":       token,
 	})
 	log.Println("登录成功！")
-	//log.Printf("登录成功!!! token为%s", token)
 }
 
 // Register 用户注册
-func (controller userController)Register(c *gin.Context) {
+func (controller userController) Register(c *gin.Context) {
 	//参数
 	username := c.Query("username")
 	pwd := c.Query("password")
@@ -101,12 +120,14 @@ func (controller userController)Register(c *gin.Context) {
 	hasedpsw, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "加密错误",
+			"status_code": -1,
+			"status_msg":  "加密错误!!!",
+			"user_id":     0,
+			"token":       0,
 		})
 		log.Println("加密错误")
 		return
 	}
-	//id := ksuid.New()
 	rand.Seed(time.Now().UnixNano())
 
 	id := rand.Int63() // 生成比较大的随机数
@@ -116,14 +137,31 @@ func (controller userController)Register(c *gin.Context) {
 		Password:      string(hasedpsw),
 		FollowCount:   0,
 		FollowerCount: 0,
+		IsFollow:      false,
 	}
 	// db.AutoMigrate(model.User{})
 	//创建此用户
 	// db.Create(&u)
 	controller.userDao.AddUserModel(&u)
+	//返回token
+	token, err := utils.ReleaseToken(&u)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status_code": -1,
+			"status_msg":  "系统异常!!!",
+			"user_id":     0,
+			"token":       0,
+		})
+		log.Println("系统异常 err=", err.Error())
+		return
+	}
+
 	c.JSON(200, gin.H{
-		"msg": "注册成功!!!",
+		"status_code": 0,
+		"status_msg":  "注册成功!!!",
+		"user_id":     id,
+		"token":       token,
 	})
 
-	log.Printf("注册成功!用户id为：%d, 用户名为：%s,密码是：%s", id, username, pwd)
+	log.Printf("注册成功!用户id为：%d, 用户名为：%s,密码是：%s token:%s", id, username, pwd, token)
 }

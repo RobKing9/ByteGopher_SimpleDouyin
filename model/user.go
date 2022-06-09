@@ -6,6 +6,7 @@ type UserModel struct {
 	Password      string `gorm:"column:password" json:"password"`
 	FollowCount   int64  `gorm:"column:follow_count" json:"follow_count"`
 	FollowerCount int64  `gorm:"column:follower_count" json:"follower_count"`
+	IsFollow      bool   `gorm:"column:is_follow" json:"is_follow"`
 }
 
 func (UserModel) TableName() string {
