@@ -2,10 +2,9 @@ package utils
 
 import (
 	"ByteGopher_SimpleDouyin/model"
+	"github.com/golang-jwt/jwt"
 	"log"
 	"time"
-
-	"github.com/golang-jwt/jwt"
 )
 
 /*

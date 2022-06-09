@@ -1,12 +1,12 @@
 package model
 
 type UserModel struct {
-	UserID        int64  `gorm:"column:user_id;primaryKey;unique;not null;autoIncrement" json:"user_id"`
+	UserID        int64  `gorm:"column:user_id;primaryKey;unique;not null;autoIncrement" json:"id"`
 	UserName      string `gorm:"column:user_name" json:"user_name"`
-	Password      string `gorm:"column:password" json:"password"`
+	Password      string `gorm:"column:password" json:"-"`
 	FollowCount   int64  `gorm:"column:follow_count" json:"follow_count"`
 	FollowerCount int64  `gorm:"column:follower_count" json:"follower_count"`
-	IsFollow      bool   `gorm:"column:is_follow" json:"is_follow"`
+	//IsFollow      bool   `gorm:"column:is_follow" json:"is_follow"`
 }
 
 func (UserModel) TableName() string {

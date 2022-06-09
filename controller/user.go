@@ -4,13 +4,14 @@ import (
 	"ByteGopher_SimpleDouyin/dao"
 	"ByteGopher_SimpleDouyin/model"
 	"ByteGopher_SimpleDouyin/utils"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
-
-	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type UserController interface {
@@ -30,15 +31,38 @@ func NewUserController() UserController {
 }
 
 func (controller userController) Info(c *gin.Context) {
+	// 认证失败
+	flag, _ := c.Get("flag")
+	if !flag.(bool) {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"status_code": -1,
+			"status_msg":  "请先登录!!!",
+			"user":        nil,
+		})
+		log.Println("请先登录！")
+		return
+	}
+	// 获取用户id
+	user_id, _ := strconv.ParseInt(c.Query("user_id"), 10, 64)
+	// 通过用户id获取用户
+	user, err := controller.userDao.GetCommonUserByID(int(user_id))
+	if err != nil || user == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"status_code": -1,
+			"status_msg":  "用户id不存在!!!",
+			"user":        nil,
+		})
+		log.Println("用户id不存在！")
+		return
+	}
 
-	user, _ := c.Get("user")
+	// TODO: 当前用户是否follow了这个user， is_follow字段
+	// TODO: 等关注功能写完 再回来写这里
+
 	c.JSON(http.StatusOK, gin.H{
 		"status_code": 0,
 		"status_msg":  "successful",
 		"user":        user,
-		//"user": gin.H{
-		//	"user":user,
-		//},
 	})
 }
 
@@ -47,6 +71,7 @@ func (controller userController) Login(c *gin.Context) {
 	//参数
 	username := c.Query("username")
 	pwd := c.Query("password")
+
 	//数据验证
 	//密码必须超过六位
 	// if len(psd) < 6 {
@@ -107,15 +132,46 @@ func (controller userController) Register(c *gin.Context) {
 	//参数
 	username := c.Query("username")
 	pwd := c.Query("password")
+
+	// 判断用户名是否存在
+	uu, err := controller.userDao.GetUserByName(username)
+	if err != nil {
+		if err.Error() != "record not found" {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"status_code": -1,
+				"status_msg":  "系统异常!!!",
+				"user_id":     0,
+				"token":       0,
+			})
+			log.Println("系统异常")
+			return
+		}
+	}
+	fmt.Printf("%+v\n", uu)
+	if uu != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status_code": -1,
+			"status_msg":  "该用户名已存在!!!",
+			"user_id":     0,
+			"token":       0,
+		})
+		log.Println("用户名已存在")
+		return
+	}
+
 	//数据验证
 	//密码必须超过六位
-	// if len(psw) < 6 {
-	// 	c.JSON(http.StatusUnprocessableEntity, gin.H{
-	// 		"error": "密码必须超过六位！",
-	// 	})
-	// 	log.Println("密码必须超过六位！")
-	// 	return
-	// }
+	if len(pwd) < 6 {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"status_code": -1,
+			"status_msg":  "密码必须超过六位!!!",
+			"user_id":     0,
+			"token":       0,
+		})
+		log.Println("密码必须超过六位！")
+		return
+	}
+
 	//密码加密
 	hasedpsw, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.DefaultCost)
 	if err != nil {
@@ -137,7 +193,7 @@ func (controller userController) Register(c *gin.Context) {
 		Password:      string(hasedpsw),
 		FollowCount:   0,
 		FollowerCount: 0,
-		IsFollow:      false,
+		//IsFollow:      false,
 	}
 	// db.AutoMigrate(model.User{})
 	//创建此用户

@@ -5,9 +5,10 @@ import (
 )
 
 type UserDao interface {
-	GetUserModelByID(id int) (*model.UserModel, error) 
+	GetUserModelByID(id int) (*model.UserModel, error)
 	GetUserByName(username string) (*model.UserModel, error)
 	AddUserModel(m *model.UserModel) error
+	GetCommonUserByID(id int) (*model.User, error)
 }
 
 type userDao struct{}
@@ -21,7 +22,7 @@ func NewUserDao() UserDao {
 	return &userDao{}
 }
 
-func (dao *userDao)GetUserModelByID(id int) (*model.UserModel, error) {
+func (dao *userDao) GetUserModelByID(id int) (*model.UserModel, error) {
 	var m model.UserModel
 	if err := MysqlDb.Table("user").Where("user_id = ?", id).Find(&m).Error; err != nil {
 		return nil, err
@@ -29,18 +30,30 @@ func (dao *userDao)GetUserModelByID(id int) (*model.UserModel, error) {
 	return &m, nil
 }
 
-func (dao *userDao)GetUserByName(username string) (*model.UserModel, error) {
+func (dao *userDao) GetCommonUserByID(id int) (*model.User, error) {
+	var m model.User
+	if err := MysqlDb.Table("user").Where("user_id = ?", id).Find(&m).Error; err != nil {
+		return nil, err
+	}
+	if MysqlDb.Table("user").Where("user_id = ?", id).Find(&m).RowsAffected == 0 {
+		return nil, nil
+	}
+	return &m, nil
+}
+
+func (dao *userDao) GetUserByName(username string) (*model.UserModel, error) {
 	var m model.UserModel
-	if err := MysqlDb.Table("user").Where("user_name = ?", username).Find(&m).Error; err != nil {
+
+	if err := MysqlDb.Table("user").Where("user_name = ?", username).First(&m).Error; err != nil {
+		print("哈哈哈1")
 		return nil, err
 	}
 	return &m, nil
 }
 
-func (dao *userDao)AddUserModel(m *model.UserModel) error {
+func (dao *userDao) AddUserModel(m *model.UserModel) error {
 	return MysqlDb.Save(m).Error
 }
-
 
 /*
 func AddUserModel(m *model.UserModel) error {
