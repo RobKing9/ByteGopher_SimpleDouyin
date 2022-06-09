@@ -39,7 +39,7 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 			user.POST("/register/", userController.Register)
 		}
 		//发布视频接口
-		publish := douyin.Group("/publish")
+		publish := douyin.Group("/publish", middleware.AuthMiddleware())
 		{
 			publish.GET("/action")
 			publish.GET("/list")

@@ -23,7 +23,6 @@ func AuthMiddleware() gin.HandlerFunc {
 		var authFlag = false
 
 		tokenString := c.Query("token")
-		//log.Printf("请求token:%s", tokenString)
 
 		//validate token formate
 		if tokenString == "" {
@@ -65,6 +64,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		//用户存在 将user信息写入上下文
 		c.Set("user", u)
+		c.Set("userid", u.UserID)
 		c.Next()
 	}
 }

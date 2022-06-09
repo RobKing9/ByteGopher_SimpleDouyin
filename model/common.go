@@ -38,3 +38,16 @@ type FeedResponse struct {
 // func (User) TableName() string {
 // 	return "user"
 // }
+
+// upload video的返回
+type RespModel struct {
+	StatusCode int64  `json:"status_code"`
+	StatusMsg  string `json:"status_msg"`
+}
+
+// 视频列表的返回
+type RespVideoList struct {
+	StatusCode int64   `json:"status_code"`
+	StatusMsg  string  `json:"status_msg"`
+	VideoList  []Video `json:"video_list"` // 用户发布的视频列表
+}

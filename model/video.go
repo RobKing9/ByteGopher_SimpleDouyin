@@ -4,19 +4,17 @@ import (
 	"time"
 )
 
-
 type VideoModel struct {
-	VideoID       int64            `gorm:"column:video_id;primaryKey;unique;not null;autoIncrement" json:"video_id"`
-	UserID        int64          `gorm:"column:user_id" json:"user_id"`
-	Author        UserModel      `json:"author" gorm:"foreignKey:UserID"`
-	PlayURL       string      `gorm:"column:play_url" json:"play_url"`
-	Title         string      `gorm:"column:title" json:"title"`
-	CoverURL      string       `gorm:"column:cover_url" json:"cover_url"`
-	FavoriteCount int64      `gorm:"column:favorite_count" json:"favorite_count"`
-	CommentCount  int64      `gorm:"column:comment_count" json:"comment_count"`
-	PublishTime   time.Time      `gorm:"column:publish_time" json:"publish_time"`
+	VideoID       int64     `gorm:"column:video_id;primaryKey;unique;not null;autoIncrement" json:"video_id"`
+	UserID        int64     `gorm:"column:user_id" json:"user_id"`
+	Author        UserModel `json:"author" gorm:"foreignKey:UserID"`
+	PlayURL       string    `gorm:"column:play_url" json:"play_url"`
+	Title         string    `gorm:"column:title" json:"title"`
+	CoverURL      string    `gorm:"column:cover_url" json:"cover_url"`
+	FavoriteCount int64     `gorm:"column:favorite_count" json:"favorite_count"`
+	CommentCount  int64     `gorm:"column:comment_count" json:"comment_count"`
+	PublishTime   time.Time `gorm:"column:publish_time" json:"publish_time"`
 }
-
 
 // TableName sets the insert table name for this struct type
 func (VideoModel) TableName() string {
