@@ -1,16 +1,14 @@
 package model
 
 import (
-	"database/sql"
 	"time"
 )
 
-
 type CommentModel struct {
-	CommentID  int            `gorm:"column:comment_id;primaryKey;unique;not null;autoIncrement" json:"comment_id"`
-	VideoID    sql.NullInt64  `gorm:"column:video_id" json:"video_id"`
-	UserID     sql.NullInt64  `gorm:"column:user_id" json:"user_id"`
-	Content    sql.NullString `gorm:"column:content" json:"content"`
+	CommentID  int64            `gorm:"column:comment_id;primaryKey;unique;not null;autoIncrement" json:"comment_id"`
+	VideoID    int64          `gorm:"column:video_id" json:"video_id"`
+	UserID     int64          `gorm:"column:user_id" json:"user_id"`
+	Content    string         `gorm:"column:content" json:"content"`
 	CreateDate time.Time      `gorm:"column:create_date" json:"create_date"`
 }
 

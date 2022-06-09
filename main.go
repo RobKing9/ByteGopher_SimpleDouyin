@@ -14,11 +14,11 @@ import (
 func main() {
 	//初始化数据库
 	// dao.InitMysql()
-	db := dao.InitMysql()
-	println(db)
+	dao.InitMysql()
+	println(dao.MysqlDb)
 	//设置路由
 	r := gin.Default()
 	r = router.CollectRouter(r)
 	//启动路由
-	r.Run()
+	r.Run(":9999")
 }

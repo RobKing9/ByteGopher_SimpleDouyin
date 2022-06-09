@@ -7,6 +7,7 @@ import (
 
 type VideoDao interface{
 	GetVideoModels() ([]*model.VideoModel, error) 
+	GetVideos() ([]model.VideoModel, error)
 }
 
 type videoDao struct{}
@@ -16,9 +17,40 @@ func NewVideoDao() VideoDao{
 	return &videoDao{}
 }
 
-// TableName sets the insert table name for this struct type
-func TableName() string {
-	return "video"
+func (dao videoDao)GetVideos() ([]model.VideoModel, error){
+	// var idCardListEntity []IdCardEntity
+	videos := make([]model.VideoModel, 0)
+	if err := MysqlDb.Preload("Author").Find(&videos).Limit(30).Error; err != nil {
+		return nil, err
+	}
+	return videos, nil
+}
+
+func (dao videoDao)CheckFavorite(videoID int64, userID int64) (bool, error){
+	var res model.FavoriteModel
+	if err := MysqlDb.Where("video_id = ? AND user_id = ?", videoID , userID).Find(&res).Error; err != nil {
+		return false, err
+	}
+	return true, nil
+} 
+
+func (dao videoDao)CheckFollow(authorID int64, myID int64) (bool, error) {
+	var res model.FollowModel
+	if err := MysqlDb.Where("user_id = ? AND follwer_id = ?", authorID, myID).Find(&res).Error; err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+
+func (dao *videoDao)GetVideoModels() ([]*model.VideoModel, error) {
+	res := make([]*model.VideoModel, 0)
+	fmt.Println(MysqlDb)
+	if err := MysqlDb.Table("video").Limit(30).Find(&res).Error; err != nil {
+		return nil, err
+	}
+	fmt.Println(" GetVideoModels success")
+	return res, nil
 }
 
 func AddVideoModel(m *model.VideoModel) error {
@@ -51,12 +83,3 @@ func GetVideoModelByID(id int) (*model.VideoModel, error) {
 	return &m, nil
 }
 
-func (dao *videoDao)GetVideoModels() ([]*model.VideoModel, error) {
-	res := make([]*model.VideoModel, 0)
-	fmt.Println(MysqlDb)
-	if err := MysqlDb.Table("video").Limit(30).Find(&res).Error; err != nil {
-		return nil, err
-	}
-	fmt.Println(" GetVideoModels success")
-	return res, nil
-}

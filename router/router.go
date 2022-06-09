@@ -2,6 +2,7 @@ package router
 
 import (
 	"ByteGopher_SimpleDouyin/controller"
+	"ByteGopher_SimpleDouyin/middleware"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,12 +30,13 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		//用户组
 		user := douyin.Group("/user")
 		{
+			userController := controller.NewUserController()
 			//用户信息
-			user.GET("/", controller.Info)
+			user.GET("/", middleware.AuthMiddleware(), userController.Info)
 			//用户登录接口
-			user.POST("/login", controller.Login)
+			user.POST("/login/", userController.Login)
 			//用户注册接口
-			user.POST("/register", controller.Register)
+			user.POST("/register/", userController.Register)
 		}
 		//发布视频接口
 		publish := douyin.Group("/publish")

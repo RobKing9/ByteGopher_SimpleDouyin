@@ -2,13 +2,12 @@ package dao
 
 import (
 	"ByteGopher_SimpleDouyin/model"
-	"fmt"
-
-	"github.com/jinzhu/gorm"
 )
 
 type UserDao interface {
 	GetUserModelByID(id int) (*model.UserModel, error) 
+	GetUserByName(username string) (*model.UserModel, error)
+	AddUserModel(m *model.UserModel) error
 }
 
 type userDao struct{}
@@ -22,6 +21,28 @@ func NewUserDao() UserDao {
 	return &userDao{}
 }
 
+func (dao *userDao)GetUserModelByID(id int) (*model.UserModel, error) {
+	var m model.UserModel
+	if err := MysqlDb.Table("user").Where("user_id = ?", id).Find(&m).Error; err != nil {
+		return nil, err
+	}
+	return &m, nil
+}
+
+func (dao *userDao)GetUserByName(username string) (*model.UserModel, error) {
+	var m model.UserModel
+	if err := MysqlDb.Table("user").Where("user_name = ?", username).Find(&m).Error; err != nil {
+		return nil, err
+	}
+	return &m, nil
+}
+
+func (dao *userDao)AddUserModel(m *model.UserModel) error {
+	return MysqlDb.Save(m).Error
+}
+
+
+/*
 func AddUserModel(m *model.UserModel) error {
 	return MysqlDb.Save(m).Error
 }
@@ -44,13 +65,6 @@ func UpdateUserModel(m *model.UserModel) error {
 	return MysqlDb.Save(m).Error
 }
 
-func (dao *userDao)GetUserModelByID(id int) (*model.UserModel, error) {
-	var m model.UserModel
-	if err := MysqlDb.Table("user").Where("user_id = ?", id).Find(&m).Error; err != nil {
-		return nil, err
-	}
-	return &m, nil
-}
 
 func GetUserModels(condition string, args ...interface{}) ([]*model.UserModel, error) {
 	res := make([]*model.UserModel, 0)
@@ -60,14 +74,4 @@ func GetUserModels(condition string, args ...interface{}) ([]*model.UserModel, e
 	return res, nil
 }
 
-func GetAllUserModels(db *gorm.DB) ([]*model.UserModel, error) {
-	fmt.Println("before make")
-	res := make([]*model.UserModel, 0)
-	fmt.Println("after make")
-	if err := db.Find(&res).Error; err != nil {
-		fmt.Println("Find Error!")
-		return nil, err
-	}
-	fmt.Println(res)
-	return res, nil
-}
+*/

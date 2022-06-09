@@ -11,9 +11,10 @@ type FavoriteModel struct {
 }
 
 // // TableName sets the insert table name for this struct type
-// func (model *FavoriteModel) TableName() string {
-// 	return "favorite"
-// }
+func (FavoriteModel) TableName() string {
+	return "favorite"
+}
+
 
 // func AddFavoriteModel(m *FavoriteModel) error {
 // 	return dao.MysqlDb.Save(m).Error
