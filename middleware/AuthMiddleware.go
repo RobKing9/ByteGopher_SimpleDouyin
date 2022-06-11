@@ -4,8 +4,9 @@ import (
 	"ByteGopher_SimpleDouyin/dao"
 	"ByteGopher_SimpleDouyin/model"
 	"ByteGopher_SimpleDouyin/utils"
-	"github.com/gin-gonic/gin"
 	"log"
+
+	"github.com/gin-gonic/gin"
 )
 
 /*

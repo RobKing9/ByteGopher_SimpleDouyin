@@ -26,6 +26,7 @@ func InitMysql(){
 		fmt.Println("gorm open failed:", err.Error())
 	}
 	fmt.Println("gorm open success")
+	// db.AutoMigrate(&model.UserModel{}, &model.VideoModel{})
 	// fmt.Println(MysqlDb)
 	MysqlDb = db 
 }
