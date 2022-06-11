@@ -26,8 +26,7 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 			基础接口
 		*/
 		//视频流接口
-		videoController := controller.NewVideoController()
-		douyin.GET("/feed",  middleware.AuthMiddleware(), videoController.Feed)
+		douyin.GET("/feed", controller.NewVideoController().Feed)
 		//用户组
 		user := douyin.Group("/user")
 		{

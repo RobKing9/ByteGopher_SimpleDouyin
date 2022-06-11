@@ -6,9 +6,9 @@ type FollowModel struct {
 }
 
 // // TableName sets the insert table name for this struct type
-func (FollowModel) TableName() string {
-	return "follow"
-}
+// func (model *FollowModel) TableName() string {
+// 	return "follow"
+// }
 
 // func AddFollowModel(m *FollowModel) error {
 // 	return dao.MysqlDb.Save(m).Error

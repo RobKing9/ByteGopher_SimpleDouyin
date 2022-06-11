@@ -1,6 +1,6 @@
 package model
 
-type RespModel struct {
+type Response struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg,omitempty"`
 }
@@ -26,7 +26,7 @@ type User struct {
 }
 
 type FeedResponse struct {
-	RespModel
+	Response
 	VideoList []Video `json:"video_list,omitempty"`
 	NextTime  int64   `json:"next_time,omitempty"`
 }
@@ -40,10 +40,10 @@ type FeedResponse struct {
 // }
 
 // upload video的返回
-// type RespModel struct {
-// 	StatusCode int64  `json:"status_code"`
-// 	StatusMsg  string `json:"status_msg"`
-// }
+type RespModel struct {
+	StatusCode int64  `json:"status_code"`
+	StatusMsg  string `json:"status_msg"`
+}
 
 // 视频列表的返回
 type RespVideoList struct {

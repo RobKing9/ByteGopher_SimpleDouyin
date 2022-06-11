@@ -1,20 +1,15 @@
 package model
 
-import (
-	"database/sql"
-)
-
 type FavoriteModel struct {
-	VideoID int           `gorm:"column:video_id;primaryKey;unique;not null" json:"video_id"`
-	UserID  int           `gorm:"column:user_id;primaryKey;unique;not null" json:"user_id"`
-	Status  sql.NullInt64 `gorm:"column:status" json:"status"`
+	VideoID int  `gorm:"column:video_id;primaryKey;unique;not null" json:"video_id"`
+	UserID  int  `gorm:"column:user_id;primaryKey;unique;not null" json:"user_id"`
+	Status  bool `gorm:"column:status" json:"status"`
 }
 
 // // TableName sets the insert table name for this struct type
 func (FavoriteModel) TableName() string {
 	return "favorite"
 }
-
 
 // func AddFavoriteModel(m *FavoriteModel) error {
 // 	return dao.MysqlDb.Save(m).Error
