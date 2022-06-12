@@ -6,6 +6,10 @@ import (
 
 var Rd0 *redis.Client
 
+func GetRdbClient() *redis.Client {
+	return Rd0
+}
+
 func InitRedis() {
 	Rd0 = redis.NewClient(&redis.Options{
 		Addr:     "b.y1ng.vip:46379",

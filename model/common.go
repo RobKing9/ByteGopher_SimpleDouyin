@@ -1,5 +1,11 @@
 package model
 
+
+const (
+	SCodeFalse		= -1	// 成功 返回码
+	SCodeSuccess	= 0		// 失败 返回码
+)
+
 type Response struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg,omitempty"`

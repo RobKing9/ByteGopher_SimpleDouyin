@@ -68,11 +68,11 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		/*
 			扩展接口—II
 		*/
-		relation := douyin.Group("/relation")
+		relation := douyin.Group("/relation",middleware.AuthMiddleware())
 		{
-			relation.GET("/action")
-			relation.GET("/follow/list")
-			relation.GET("/follower/list")
+			relation.POST("/action",controller.RelationAction)
+			relation.GET("/follow/list",controller.FollowList)
+			relation.GET("/follower/list",controller.FollowerList)
 		}
 	}
 	return r
