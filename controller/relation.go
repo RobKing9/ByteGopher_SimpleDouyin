@@ -19,6 +19,7 @@ type RelationActionResponse struct {
 
 // RelationAction 处理关注操作
 func RelationAction(ctx *gin.Context) {
+
 	// 若鉴权失败，则返回
 	flag,exist := ctx.Get("flag")
 	if !exist {

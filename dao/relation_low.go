@@ -3,28 +3,38 @@ package dao
 import (
 	"ByteGopher_SimpleDouyin/model"
 	"encoding/json"
+	"log"
 )
 
 // 关系数据库表设计
-// 关注列表 follow: id | user_id | followinfo (存储 to_suer_id JSON)
-// 粉丝列表 fans:   id | user_id | fansinfo	(存储 to_user_id JSON) | is_follow
+// 关注列表 follow: id | user_id | to_user_id | data (存储 to_suer JSON)
+// 粉丝列表 fans:   id | user_id | to_user_id | data (存储 to_user JSON)
 
 
 // FansModel 结构模型
 type FansModel struct {
 	Id 			int64	`json:"-" gorm:"column:id"`
 	UserId 		int64	`json:"user_id" gorm:"column:user_id"`
-	ToUserId 	string	`json:"fans" gorm:"column:fansinfo"`
-	IsFollow	bool	`json:"is_follow" gorm:"column:is_follow"`
+	ToUserId 	int64	`json:"to_user_id" gorm:"column:to_user_id"`
+	Data		string	`json:"data" gorm:"column:data"`
+	IsFollow	bool	`json:"is_follow" gorm:"-"`
+}
+
+func (f FansModel) TableName() string {
+	return "fanstable"
 }
 
 // FollowModel 结构模型
 type FollowModel struct {
 	Id 			int64	`json:"-" gorm:"column:id"`
 	UserId 		int64	`json:"user_id" gorm:"column:user_id"`
-	ToUserId 	string	`json:"follow" gorm:"column:followinfo"`
+	ToUserId 	int64	`json:"to_user_id" gorm:"column:to_user_id"`
+	Data		string	`json:"data" gorm:"column:data"`
 }
 
+func (f Follow) TableName() string {
+	return "followtable"
+}
 
 
 // SaveFollowInToTable 把自己加入对方粉丝表，和自己的关注表
@@ -41,7 +51,8 @@ func SaveFollowInToTable(myId, toUserid int64) error {
 
 	fan := FansModel{
 		UserId: toUserid,
-		ToUserId: string(marshal),
+		ToUserId: myId,
+		Data: string(marshal),
 	}
 
 	tx := GetDB().Table("fanstable").Save(&fan)
@@ -56,27 +67,34 @@ func SaveFollowInToTable(myId, toUserid int64) error {
 
 // DeleteFansInToTable 把自己从对方粉丝表中删除，和自己的关注表
 func DeleteFansInToTable(myId, toUserid int64) error {
-	user, err := getUser(myId)
-	if err != nil {
-		return err
-	}
-
-	marshal, err := json.Marshal(user)
-	if err != nil {
-		return err
-	}
+	//user, err := getUser(myId)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//marshal, err := json.Marshal(user)
+	//if err != nil {
+	//	return err
+	//}
 
 	fan := FansModel{
 		UserId: toUserid,
-		ToUserId: string(marshal),
+		ToUserId: myId,
 	}
 
-	tx := GetDB().Table("fanstable").Delete(&fan)
+	log.Printf("%#v",fan)
+	tx := GetDB().Exec("delete from fanstable where user_id = ? and to_user_id = ?",toUserid,myId)
 	if tx.Error != nil {
+		log.Println(tx.Error)
 		return tx.Error
 	}
 
-	return deleteMyFollow(myId,toUserid)
+	err := deleteMyFollow(myId,toUserid)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 
@@ -113,7 +131,8 @@ func addMyFollow(myId,toUserId int64) error {
 
 	follow := FollowModel{
 		UserId: myId,
-		ToUserId: string(marshal),
+		ToUserId: toUserId,
+		Data: string(marshal),
 	}
 
 	tx := GetDB().Table("followtable").Save(&follow)
@@ -124,22 +143,24 @@ func addMyFollow(myId,toUserId int64) error {
 
 // 自己的关注表删除对方
 func deleteMyFollow(myId,toUserId int64) error {
-	toUser, err := getUser(toUserId)
-	if err != nil {
-		return err
-	}
+	//toUser, err := getUser(toUserId)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//marshal, err := json.Marshal(toUser)
+	//if err != nil {
+	//	return err
+	//}
 
-	marshal, err := json.Marshal(toUser)
-	if err != nil {
-		return err
-	}
+	//follow := FollowModel{
+	//	UserId: myId,
+	//	ToUserId: toUserId,
+	//}
 
-	follow := FollowModel{
-		UserId: myId,
-		ToUserId: string(marshal),
-	}
 
-	tx := GetDB().Table("followtable").Delete(&follow)
+	tx := GetDB().Exec("delete from followtable where user_id = ? and to_user_id = ?",myId,toUserId)
+
 
 	return tx.Error
 }
@@ -155,7 +176,7 @@ func GetFollowList(uid int64) ([]model.User,error) {
 	for _,v := range f {
 		user := model.User{}
 
-		json.Unmarshal([]byte(v.ToUserId), &user)
+		json.Unmarshal([]byte(v.Data), &user)
 
 		user.IsFollow = true
 		u = append(u,user)
@@ -173,8 +194,8 @@ func GetFollowList(uid int64) ([]model.User,error) {
 
 // GetFansList 从 fanstable 表中获取粉丝列表
 func GetFansList(uid int64) ([]model.User,error) {
-	f := []FansModel{}
 	u := []model.User{}
+
 	fMap := make(map[int64]bool)
 
 	// 获取关注表
@@ -188,14 +209,15 @@ func GetFansList(uid int64) ([]model.User,error) {
 		}
 	}
 
+	f := []FansModel{}
 	tx := GetDB().Table("fanstable").Where("user_id = ?",uid).Find(&f)
 
 	for _,v := range f {
 		user := model.User{}
 
-		json.Unmarshal([]byte(v.ToUserId), &user)
+		json.Unmarshal([]byte(v.Data), &user)
 
-		if fMap[v.UserId] {
+		if fMap[v.ToUserId] {
 			v.IsFollow = true
 		}
 
