@@ -8,7 +8,7 @@ type UserDao interface {
 	GetUserModelByID(id int) (*model.UserModel, error)
 	GetUserByName(username string) (*model.UserModel, error)
 	AddUserModel(m *model.UserModel) error
-	GetCommonUserByID(id int) (*model.User, error)
+	GetCommonUserByID(id int64) (*model.User, error)
 }
 
 type userDao struct{}
@@ -30,7 +30,7 @@ func (dao *userDao) GetUserModelByID(id int) (*model.UserModel, error) {
 	return &m, nil
 }
 
-func (dao *userDao) GetCommonUserByID(id int) (*model.User, error) {
+func (dao *userDao) GetCommonUserByID(id int64) (*model.User, error) {
 	var m model.User
 	if err := MysqlDb.Table("user").Where("user_id = ?", id).Find(&m).Error; err != nil {
 		return nil, err

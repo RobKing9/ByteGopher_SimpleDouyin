@@ -45,7 +45,7 @@ func (controller userController) Info(c *gin.Context) {
 	// 获取用户id
 	user_id, _ := strconv.ParseInt(c.Query("user_id"), 10, 64)
 	// 通过用户id获取用户
-	user, err := controller.userDao.GetCommonUserByID(int(user_id))
+	user, err := controller.userDao.GetCommonUserByID(user_id)
 	if err != nil || user == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"status_code": -1,
