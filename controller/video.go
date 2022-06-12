@@ -53,7 +53,7 @@ func (controller *videoController) Feed(c *gin.Context) {
 			CoverUrl:      v.CoverURL,
 			FavoriteCount: v.FavoriteCount,
 			CommentCount:  v.CommentCount,
-			IsFavorite:    true,
+			IsFavorite:    false,
 		}
 		fmt.Println(video)
 		videoList = append(videoList, video)
