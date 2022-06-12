@@ -6,10 +6,8 @@ import (
 	"log"
 )
 
-const IsLike = 0     //点赞的状态
-const Unlike = 1     //取消赞的状态
-const LikeAction = 1 //点赞的行为
 type FavoriteDao interface {
+	VideoDao
 	GetLikeUserIdList(videoId int64) ([]int64, error)
 	UpdateLike(userId int64, videoId int64, actionType int32) error
 	InsertLike(likeData model.FavoriteModel) error
@@ -17,13 +15,20 @@ type FavoriteDao interface {
 	GetLikeVideoIdList(userId int64) ([]int64, error)
 }
 type favoriteDao struct {
+	videoDao
+}
+
+func NewFavoriteDao() FavoriteDao {
+	return &favoriteDao{
+		videoDao{},
+	}
 }
 
 // GetLikeUserIdList 根据videoId获取点赞userId
 func (f *favoriteDao) GetLikeUserIdList(videoId int64) ([]int64, error) {
 	var likeUserIdList []int64 //存所有该视频点赞用户id；
 	//查询Favorite表对应视频id点赞用户，返回查询结果
-	err := MysqlDb.Model(model.FavoriteModel{}).Where(map[string]interface{}{"video_id": videoId, "cancel": IsLike}).
+	err := MysqlDb.Model(model.FavoriteModel{}).Where(map[string]interface{}{"video_id": videoId, "status": true}).
 		Pluck("user_id", &likeUserIdList).Error
 	//查询过程出现错误，返回默认值0，并输出错误信息
 	if err != nil {
@@ -37,9 +42,15 @@ func (f *favoriteDao) GetLikeUserIdList(videoId int64) ([]int64, error) {
 
 // UpdateLike 根据userId，videoId,actionType点赞或者取消赞
 func (f *favoriteDao) UpdateLike(userId int64, videoId int64, actionType int32) error {
-	//更新当前用户观看视频的点赞状态“cancel”，返回错误结果
+	var status bool
+	if actionType == 1 {
+		status = true
+	} else if actionType == 2 {
+		status = false
+	}
+	//更新当前用户观看视频的点赞状态“status”，返回错误结果
 	err := MysqlDb.Model(model.FavoriteModel{}).Where(map[string]interface{}{"user_id": userId, "video_id": videoId}).
-		Update("cancel", actionType).Error
+		Update("status", status).Error
 	//如果出现错误，返回更新数据库失败
 	if err != nil {
 		log.Println(err.Error())
@@ -51,7 +62,7 @@ func (f *favoriteDao) UpdateLike(userId int64, videoId int64, actionType int32) 
 
 // InsertLike 插入点赞数据
 func (f *favoriteDao) InsertLike(likeData model.FavoriteModel) error {
-	//创建点赞数据，默认为点赞，cancel为0，返回错误结果
+	//创建点赞数据，默认为点赞，Status 为true，返回错误结果
 	err := MysqlDb.Model(model.FavoriteModel{}).Create(&likeData).Error
 	//如果有错误结果，返回插入失败
 	if err != nil {
@@ -85,7 +96,7 @@ func (f *favoriteDao) GetLikeInfo(userId int64, videoId int64) (model.FavoriteMo
 // GetLikeVideoIdList 根据userId查询所属点赞全部videoId
 func (f *favoriteDao) GetLikeVideoIdList(userId int64) ([]int64, error) {
 	var likeVideoIdList []int64
-	err := MysqlDb.Model(model.FavoriteModel{}).Where(map[string]interface{}{"user_id": userId, "cancel": IsLike}).
+	err := MysqlDb.Model(model.FavoriteModel{}).Where(map[string]interface{}{"user_id": userId, "status": true}).
 		Pluck("video_id", &likeVideoIdList).Error
 	if err != nil {
 		//查询数据为0，返回空likeVideoIdList切片，以及返回无错误
@@ -100,3 +111,11 @@ func (f *favoriteDao) GetLikeVideoIdList(userId int64) ([]int64, error) {
 	}
 	return likeVideoIdList, nil
 }
+
+//func (dao *favoriteDao) GetFavoriteModelByID(id int) (*model.Video, error) {
+//	var m model.Video
+//	if err := MysqlDb.First(&m, id).Error; err != nil {
+//		return nil, err
+//	}
+//	return &m, nil
+//}

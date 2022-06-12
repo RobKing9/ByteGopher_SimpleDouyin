@@ -15,8 +15,6 @@ import (
 
 type VideoController interface {
 	Feed(c *gin.Context)
-	PublishAction(c *gin.Context)
-	PublishList(c *gin.Context)
 }
 
 type videoController struct {
@@ -204,5 +202,3 @@ func (controller *videoController) PublishList(c *gin.Context) {
 	}
 	c.JSON(200, res)
 }
-
-

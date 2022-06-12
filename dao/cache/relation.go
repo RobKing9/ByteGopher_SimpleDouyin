@@ -35,7 +35,6 @@ func GetFollowListByUserId(userid int64) []model.User{
 
 
 // 通过 userId 获得用户表
-// 从 redis 获取
 func getUserListByUserId(userid int64, listType string) []model.User {
 	// 建立 context 上下文，用于 redis 的操作
 	// ctx 在 3 秒后失效, 或者在函数返回后取消
@@ -48,12 +47,12 @@ func getUserListByUserId(userid int64, listType string) []model.User {
 	// 此JSON值会作为 redis 缓存中 user:id（key）的 value 值
 	inChan := make(chan string,5)
 
-	// 传递 列表
+	// 传递 粉丝列表
 	outChan := make(chan []model.User,1)
 
 
 	key := fmt.Sprintf("%v:%v",listType,userid)
-	// 获取id列表
+	// 获取粉丝id列表
 	usersId,err := GetRdb().ZRange(ctx,key,0,-1).Result()
 	if err != nil {
 		if err == redis.Nil {

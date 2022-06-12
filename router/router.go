@@ -41,20 +41,21 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		//发布视频接口
 		publish := douyin.Group("/publish", middleware.AuthMiddleware())
 		{
-			publish.GET("/action",controller.NewVideoController().PublishAction)
-			publish.GET("/list",controller.NewVideoController().PublishList)
+			publish.GET("/action")
+			publish.GET("/list")
 		}
 
 		/*
 			扩展接口-I
 		*/
 		//点赞接口
-		favorite := douyin.Group("/favorite")
+		favorite := douyin.Group("/favorite", middleware.AuthMiddleware())
 		{
+			favoritesController := controller.NewFavoriteController()
 			//赞操作
-			favorite.GET("/action")
+			favorite.POST("/action/", favoritesController.FavoriteAction)
 			//赞列表
-			favorite.GET("/list")
+			favorite.GET("/list", favoritesController.GetFavouriteList)
 		}
 		//评论接口
 		comment := douyin.Group("/comment")
@@ -68,11 +69,11 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		/*
 			扩展接口—II
 		*/
-		relation := douyin.Group("/relation",middleware.AuthMiddleware())
+		relation := douyin.Group("/relation", middleware.AuthMiddleware())
 		{
-			relation.POST("/action/",controller.RelationAction)
-			relation.GET("/follow/list",controller.FollowList)
-			relation.GET("/follower/list",controller.FollowerList)
+			relation.POST("/action", controller.RelationAction)
+			relation.GET("/follow/list", controller.FollowList)
+			relation.GET("/follower/list", controller.FollowerList)
 		}
 	}
 	return r
