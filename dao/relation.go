@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"sync"
 )
 
 // 关系数据库表设计
@@ -20,6 +21,8 @@ import (
 //data BLOB(255),
 //is_follow tinyint(1) not null
 //);
+
+var Wg sync.WaitGroup
 
 // FansModel 结构模型
 type FansModel struct {
@@ -65,43 +68,63 @@ func SaveFollowInToTable(myId, toUserid int64) error {
 		return err
 	}
 
+
 	marshal, err := json.Marshal(user)
 	if err != nil {
 		return err
 	}
 
-	var exist bool
-	// 判断自己是否在对方关注表中
-	flist,err := GetFollowList(toUserid)
-	if err != nil {
-		return err
-	}
-	for _,v := range flist {
-		if v.Id == myId {
-			exist = true
+	fanChan := make(chan FansModel,1)
+
+
+	go func(myId, toUserid int64, str string ,fanChan chan FansModel) {
+		var exist bool
+		// 判断自己是否在对方关注表中
+		flist,err := GetFollowList(toUserid)
+		if err != nil {
+			log.Println(err)
 		}
-	}
+		for _,v := range flist {
+			if v.Id == myId {
+				exist = true
+			}
+		}
 
-	fan := FansModel{
-		UserId: toUserid,
-		ToUserId: myId,
-		Data: string(marshal),
-		IsFollow: exist,
-	}
+		fan := FansModel{
+			UserId: toUserid,
+			ToUserId: myId,
+			Data: str,
+			IsFollow: exist,
+		}
 
-	tx := GetDB().Table("fanstable").Save(&fan)
-	if tx.Error != nil {
-		return tx.Error
-	}
+		fanChan <- fan
+		close(fanChan)
 
-	// 更改自己粉丝列表状态
-	tx = GetDB().Exec("update fanstable set is_follow = ? where user_id = ? and to_user_id = ?",true,myId,toUserid)
-	if tx.Error != nil {
-		log.Println(tx.Error)
-		return tx.Error
-	}
+	}(myId, toUserid,string(marshal),fanChan)
 
-	return addMyFollow(myId,toUserid)
+
+	Wg.Add(2)
+	defer Wg.Wait()
+	go func(myId, toUserid int64, fanChan chan FansModel) {
+		fan := <-fanChan
+
+		tx := GetDB().Table("fanstable").Save(&fan)
+		if tx.Error != nil {
+			log.Println(tx.Error)
+		}
+
+		// 更改自己粉丝列表状态
+		tx = GetDB().Exec("update fanstable set is_follow = ? where user_id = ? and to_user_id = ?",true,myId,toUserid)
+		if tx.Error != nil {
+			log.Println(tx.Error)
+		}
+
+		Wg.Done()
+	}(myId, toUserid,fanChan)
+
+	go addMyFollow(myId,toUserid)
+
+	return nil
 }
 
 
@@ -109,18 +132,24 @@ func SaveFollowInToTable(myId, toUserid int64) error {
 // DeleteFansInToTable 把自己从对方粉丝表中删除，和自己的关注表
 func DeleteFansInToTable(myId, toUserid int64) error {
 
-	tx := GetDB().Exec("update fanstable set is_follow = ? where user_id = ? and to_user_id = ?",false,myId,toUserid)
-	if tx.Error != nil {
-		log.Println(tx.Error)
-		return tx.Error
-	}
+	Wg.Add(1)
+	defer Wg.Wait()
 
-	//log.Printf("%#v",fan)
-	tx = GetDB().Exec("delete from fanstable where user_id = ? and to_user_id = ?",toUserid,myId)
-	if tx.Error != nil {
-		log.Println(tx.Error)
-		return tx.Error
-	}
+	go func(myId, toUserid int64) {
+		tx := GetDB().Exec("update fanstable set is_follow = ? where user_id = ? and to_user_id = ?",false,myId,toUserid)
+		if tx.Error != nil {
+			log.Println(tx.Error)
+		}
+
+
+		tx = GetDB().Exec("delete from fanstable where user_id = ? and to_user_id = ?",toUserid,myId)
+		if tx.Error != nil {
+			log.Println(tx.Error)
+		}
+
+		Wg.Done()
+	}(myId, toUserid)
+
 
 	err := deleteMyFollow(myId,toUserid)
 	if err != nil {
@@ -151,22 +180,22 @@ func getUser(uid int64) (model.User,error) {
 
 
 // 把对方添加进自己的关注表
-func addMyFollow(myId,toUserId int64) error {
+func addMyFollow(myId,toUserId int64)  {
 
 	// 判断即将插入的数据是否存在
 	b, err := judgeExist(myId, toUserId, follow)
 	if err != nil || b == true {
-		return err
+		log.Println(err)
 	}
 
 	toUser, err := getUser(toUserId)
 	if err != nil {
-		return err
+		log.Println(err)
 	}
 
 	marshal, err := json.Marshal(toUser)
 	if err != nil {
-		return err
+		log.Println(err)
 	}
 
 	follow := FollowModel{
@@ -177,8 +206,11 @@ func addMyFollow(myId,toUserId int64) error {
 	}
 
 	tx := GetDB().Table("followtable").Save(&follow)
+	if tx.Error != nil {
+		log.Println(tx.Error)
+	}
 
-	return tx.Error
+	Wg.Done()
 }
 
 
@@ -206,11 +238,6 @@ func GetFollowList(uid int64) ([]model.User,error) {
 
 		user.IsFollow = v.IsFollow
 		u = append(u,user)
-	}
-
-	err := countUsers(uid)
-	if err != nil {
-		return nil, err
 	}
 
 	return u,tx.Error
@@ -241,17 +268,17 @@ func GetFansList(uid int64) ([]model.User,error) {
 
 // CountUsers 统计关注数和粉丝数
 // 并更改
-func countUsers(uid int64) error {
+func CountUsers(uid int64) {
 	var followCount int64
 	tx := GetDB().Table("followtable").Where("user_id = ?",uid).Count(&followCount)
 	if tx.Error != nil {
-		return tx.Error
+		log.Println(tx.Error)
 	}
 
 	var fansCount int64
 	tx = GetDB().Table("fanstable").Where("user_id = ?",uid).Count(&fansCount)
 	if tx.Error != nil {
-		return tx.Error
+		log.Println(tx.Error)
 	}
 
 	u := model.UserModel{
@@ -259,7 +286,11 @@ func countUsers(uid int64) error {
 	}
 
 	tx = GetDB().Model(&u).Table("user").Updates(model.UserModel{FollowerCount: fansCount,FollowCount: followCount})
-	return tx.Error
+	if tx.Error != nil {
+		log.Println(tx.Error)
+	}
+
+	Wg.Done()
 }
 
 
