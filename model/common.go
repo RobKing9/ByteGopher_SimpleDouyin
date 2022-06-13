@@ -52,3 +52,9 @@ type RespVideoList struct {
 	StatusMsg  string  `json:"status_msg"`
 	VideoList  []Video `json:"video_list"` // 用户发布的视频列表
 }
+type CommentInfo struct {
+	Id         int64  `json:"id,omitempty"`
+	UserInfo   User   `json:"user,omitempty"`
+	Content    string `json:"content,omitempty"`
+	CreateDate string `json:"create_date,omitempty"`
+}

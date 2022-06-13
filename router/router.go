@@ -27,7 +27,7 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		*/
 		//视频流接口
 		videoController := controller.NewVideoController()
-		douyin.GET("/feed",  middleware.AuthMiddleware(), videoController.Feed)
+		douyin.GET("/feed", middleware.AuthMiddleware(), videoController.Feed)
 		//用户组
 		user := douyin.Group("/user")
 		{
@@ -60,12 +60,12 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 			favorite.GET("/list", favoritesController.GetFavouriteList)
 		}
 		//评论接口
-		comment := douyin.Group("/comment")
+		comment := douyin.Group("/comment", middleware.AuthMiddleware())
 		{
 			//评论操作
-			comment.GET("/action")
+			comment.POST("/action/", controller.NewCommentController().CommentAction)
 			//评论列表
-			comment.GET("/list")
+			comment.GET("/list", controller.NewCommentController().CommentList)
 		}
 
 		/*

@@ -41,6 +41,7 @@ type GetFavouriteListResponse struct {
 func (fc *favoriteController) FavoriteAction(c *gin.Context) {
 	// 若鉴权失败，则返回
 	flag, exist := c.Get("flag")
+	fmt.Println("鉴权flag", flag)
 	if !exist {
 		// TODO: 存入日志？
 		log.Println("RelationAction: this flag not exist")
@@ -54,15 +55,14 @@ func (fc *favoriteController) FavoriteAction(c *gin.Context) {
 		})
 		return
 	}
-	strUserId := c.GetString("userId")
-	fmt.Println(strUserId)
-	userId, _ := strconv.ParseInt(strUserId, 10, 64)
+	strUserId, _ := c.Get("userid")
+	fmt.Println("获取到的用户id：", strUserId.(int64))
 	strVideoId := c.Query("video_id")
 	videoId, _ := strconv.ParseInt(strVideoId, 10, 64)
 	strActionType := c.Query("action_type")
 	actionType, _ := strconv.ParseInt(strActionType, 10, 64)
 	//获取点赞或者取消赞操作的错误信息
-	err := fc.favoriteDao.UpdateLike(userId, videoId, int32(actionType))
+	err := fc.favoriteDao.UpdateLike(strUserId.(int64), videoId, int32(actionType))
 	if err == nil {
 		log.Printf("方法like.FavouriteAction(userid, videoId, int32(actiontype) 成功")
 		c.JSON(http.StatusOK, likeResponse{
