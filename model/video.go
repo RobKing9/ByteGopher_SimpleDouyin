@@ -7,7 +7,7 @@ import (
 type VideoModel struct {
 	VideoID       int64     `gorm:"column:video_id;primaryKey;unique;not null;autoIncrement" json:"video_id"`
 	UserID        int64     `gorm:"column:user_id" json:"user_id"`
-	Author        UserModel `json:"author" gorm:"foreignKey:UserID"`
+	Author        UserModel `json:"author" gorm:"foreignkey:UserID; references:UserID"`
 	PlayURL       string    `gorm:"column:play_url" json:"play_url"`
 	Title         string    `gorm:"column:title" json:"title"`
 	CoverURL      string    `gorm:"column:cover_url" json:"cover_url"`

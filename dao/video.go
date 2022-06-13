@@ -2,15 +2,16 @@ package dao
 
 import (
 	"ByteGopher_SimpleDouyin/model"
-	"fmt"
+	"ByteGopher_SimpleDouyin/utils"
 )
 
 type VideoDao interface {
-	GetVideoModels() ([]*model.VideoModel, error)
-	GetVideos() ([]model.VideoModel, error)
+	GetVideoModels(latestTime string) ([]model.VideoModel, error)
 	AddVideoModel(m *model.VideoModel) error
 	GetVideoModelByID(id int) (*model.VideoModel, error)
 	GetVideoListByUserId(Userid int64) ([]model.VideoModel, error)
+	CheckFavorite(videoID int64, userID int64) (bool, error)
+	CheckFollow(authorID int64, myID int64) (bool, error)
 }
 
 type videoDao struct{}
@@ -19,40 +20,39 @@ func NewVideoDao() VideoDao {
 	return &videoDao{}
 }
 
-func (dao videoDao) GetVideos() ([]model.VideoModel, error) {
-	// var idCardListEntity []IdCardEntity
+func (dao videoDao) GetVideoModels(latestTime string) ([]model.VideoModel, error) {
 	videos := make([]model.VideoModel, 0)
-	if err := MysqlDb.Preload("Author").Find(&videos).Limit(30).Error; err != nil {
+	if err := MysqlDb.Preload("Author").Where("publish_time < ?", utils.UnixToTime(latestTime)).Order("publish_time DESC").Find(&videos).Limit(30).Error; err != nil {
 		return nil, err
 	}
 	return videos, nil
 }
 
-func (dao videoDao) CheckFavorite(videoID int64, userID int64) (bool, error) {
+func (dao videoDao) CheckFavorite(videoID int64, myUserID int64) (bool, error) {
 	var res model.FavoriteModel
-	if err := MysqlDb.Where("video_id = ? AND user_id = ?", videoID, userID).Find(&res).Error; err != nil {
+	if err := MysqlDb.Where("video_id = ? AND user_id = ?", videoID, myUserID).First(&res).Error; err != nil {
 		return false, err
 	}
 	return true, nil
 }
 
-func (dao videoDao) CheckFollow(authorID int64, myID int64) (bool, error) {
+func (dao videoDao) CheckFollow(authorID int64, myUserID int64) (bool, error) {
 	var res model.FollowModel
-	if err := MysqlDb.Where("user_id = ? AND follwer_id = ?", authorID, myID).Find(&res).Error; err != nil {
+	if err := MysqlDb.Where("user_id = ? AND follwer_id = ?", authorID, myUserID).First(&res).Error; err != nil {
 		return false, err
 	}
 	return true, nil
 }
 
-func (dao *videoDao) GetVideoModels() ([]*model.VideoModel, error) {
-	res := make([]*model.VideoModel, 0)
-	fmt.Println(MysqlDb)
-	if err := MysqlDb.Table("video").Limit(30).Find(&res).Error; err != nil {
-		return nil, err
-	}
-	fmt.Println(" GetVideoModels success")
-	return res, nil
-}
+// func (dao *videoDao) GetVideoModels() ([]*model.VideoModel, error) {
+// 	res := make([]*model.VideoModel, 0)
+// 	fmt.Println(MysqlDb)
+// 	if err := MysqlDb.Table("video").Limit(30).Find(&res).Error; err != nil {
+// 		return nil, err
+// 	}
+// 	fmt.Println(" GetVideoModels success")
+// 	return res, nil
+// }
 
 func (dao videoDao) AddVideoModel(m *model.VideoModel) error {
 	return MysqlDb.Save(m).Error
