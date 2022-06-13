@@ -8,8 +8,8 @@ import (
 )
 
 // 关系数据库表设计
-// 关注列表 follow: id | user_id | to_user_id | data (存储 to_suer JSON)
-// 粉丝列表 fans:   id | user_id | to_user_id | data (存储 to_user JSON)
+// 关注列表 follow: id | user_id | to_user_id | data (存储 to_suer JSON) | is_follow
+// 粉丝列表 fans:   id | user_id | to_user_id | data (存储 to_user JSON) | is_follow
 
 //drop table if EXISTS followtable;
 //
@@ -17,7 +17,8 @@ import (
 //id int PRIMARY key AUTO_INCREMENT,
 //user_id BIGINT(20) not null,
 //to_user_id BIGINT(20)  not null,
-//data BLOB(255)
+//data BLOB(255),
+//is_follow tinyint(1) not null
 //);
 
 // FansModel 结构模型
