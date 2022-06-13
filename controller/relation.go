@@ -42,16 +42,8 @@ func RelationAction(ctx *gin.Context) {
 		// TODO: 存入日志？
 		log.Println("RelationAction: user not exist")
 	}
-	//userId,err := strconv.ParseInt(ctx.Query("user_id"),0,64)
-	//if err != nil {
-	//	ctx.JSON(http.StatusOK,	RelationActionResponse{
-	//		RespModel:model.RespModel{
-	//			StatusCode: model.SCodeFalse,
-	//			StatusMsg: err.Error(),
-	//		},
-	//	})
-	//	return
-	//}
+
+
 
 	// 获取对方 toUserId
 	toUserId,err := strconv.ParseInt(ctx.Query("to_user_id"),0,64)

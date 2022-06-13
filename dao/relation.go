@@ -94,6 +94,13 @@ func SaveFollowInToTable(myId, toUserid int64) error {
 		return tx.Error
 	}
 
+	// 更改自己粉丝列表状态
+	tx = GetDB().Exec("update fanstable set is_follow = ? where user_id = ? and to_user_id = ?",true,myId,toUserid)
+	if tx.Error != nil {
+		log.Println(tx.Error)
+		return tx.Error
+	}
+
 	return addMyFollow(myId,toUserid)
 }
 
@@ -101,23 +108,15 @@ func SaveFollowInToTable(myId, toUserid int64) error {
 
 // DeleteFansInToTable 把自己从对方粉丝表中删除，和自己的关注表
 func DeleteFansInToTable(myId, toUserid int64) error {
-	//user, err := getUser(myId)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//marshal, err := json.Marshal(user)
-	//if err != nil {
-	//	return err
-	//}
 
-	fan := FansModel{
-		UserId: toUserid,
-		ToUserId: myId,
+	tx := GetDB().Exec("update fanstable set is_follow = ? where user_id = ? and to_user_id = ?",false,myId,toUserid)
+	if tx.Error != nil {
+		log.Println(tx.Error)
+		return tx.Error
 	}
 
-	log.Printf("%#v",fan)
-	tx := GetDB().Exec("delete from fanstable where user_id = ? and to_user_id = ?",toUserid,myId)
+	//log.Printf("%#v",fan)
+	tx = GetDB().Exec("delete from fanstable where user_id = ? and to_user_id = ?",toUserid,myId)
 	if tx.Error != nil {
 		log.Println(tx.Error)
 		return tx.Error
@@ -185,21 +184,6 @@ func addMyFollow(myId,toUserId int64) error {
 
 // 自己的关注表删除对方
 func deleteMyFollow(myId,toUserId int64) error {
-	//toUser, err := getUser(toUserId)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//marshal, err := json.Marshal(toUser)
-	//if err != nil {
-	//	return err
-	//}
-
-	//follow := FollowModel{
-	//	UserId: myId,
-	//	ToUserId: toUserId,
-	//}
-
 
 	tx := GetDB().Exec("delete from followtable where user_id = ? and to_user_id = ?",myId,toUserId)
 
@@ -237,19 +221,6 @@ func GetFollowList(uid int64) ([]model.User,error) {
 // GetFansList 从 fanstable 表中获取粉丝列表
 func GetFansList(uid int64) ([]model.User,error) {
 	u := []model.User{}
-
-	//fMap := make(map[int64]bool)
-	//
-	//// 获取关注表
-	//flist,err := GetFollowList(uid)
-	//if err != nil {
-	//	return u,err
-	//}
-	//for _,v := range flist {
-	//	if !fMap[v.Id] {
-	//		fMap[v.Id] = true
-	//	}
-	//}
 
 	f := []FansModel{}
 	tx := GetDB().Table("fanstable").Where("user_id = ?",uid).Find(&f)
