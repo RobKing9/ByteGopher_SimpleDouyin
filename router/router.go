@@ -73,8 +73,8 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		relation := douyin.Group("/relation", middleware.AuthMiddleware())
 		{
 			relation.POST("/action/", controller.RelationAction)
-			relation.GET("/follow/list", controller.FollowList)
-			relation.GET("/follower/list", controller.FollowerList)
+			relation.GET("/follow/list/", controller.FollowList)
+			relation.GET("/follower/list/", controller.FollowerList)
 		}
 	}
 	return r
