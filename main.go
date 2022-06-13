@@ -20,5 +20,5 @@ func main() {
 	r := gin.Default()
 	r = router.CollectRouter(r)
 	//启动路由
-	r.Run(":8080")
+	r.Run(":9999")
 }
