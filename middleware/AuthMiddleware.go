@@ -4,25 +4,30 @@ import (
 	"ByteGopher_SimpleDouyin/dao"
 	"ByteGopher_SimpleDouyin/model"
 	"ByteGopher_SimpleDouyin/utils"
-	"github.com/gin-gonic/gin"
 	"log"
+
+	"github.com/gin-gonic/gin"
 )
 
 /*
 	middleware包 存放中间件
 */
 
-type JwtResponse struct {
-	StatusCode int64  `json:status_code`
-	StatusMsg  string `json:status_msg`
-}
 
 func AuthMiddleware() gin.HandlerFunc {
 	//fmt.Println("进入中间件了")
 	return func(c *gin.Context) {
 		var authFlag = false
-
-		tokenString := c.Query("token")
+    var tokenString = ""
+		
+		tokenQuery := c.Query("token")
+		tokenForm := c.PostForm("token")
+		if tokenQuery != "" {
+			tokenString = tokenQuery
+		} 
+		if tokenForm != "" {
+			tokenString = tokenQuery
+		}
 
 		//validate token formate
 		if tokenString == "" {

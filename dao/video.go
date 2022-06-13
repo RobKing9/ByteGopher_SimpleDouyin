@@ -30,15 +30,15 @@ func (dao videoDao) GetVideoModels(latestTime string) ([]model.VideoModel, error
 
 func (dao videoDao) CheckFavorite(videoID int64, myUserID int64) (bool, error) {
 	var res model.FavoriteModel
-	if err := MysqlDb.Where("video_id = ? AND user_id = ?", videoID, myUserID).First(&res).Error; err != nil {
+	if err := MysqlDb.Where("video_id = ? AND user_id = ? AND status = true", videoID, myUserID).First(&res).Error; err != nil {
 		return false, err
 	}
 	return true, nil
 }
 
 func (dao videoDao) CheckFollow(authorID int64, myUserID int64) (bool, error) {
-	var res model.FollowModel
-	if err := MysqlDb.Where("user_id = ? AND follwer_id = ?", authorID, myUserID).First(&res).Error; err != nil {
+	var res FollowModel
+	if err := MysqlDb.Where("to_user_id = ? AND user_id = ?", authorID, myUserID).First(&res).Error; err != nil {
 		return false, err
 	}
 	return true, nil

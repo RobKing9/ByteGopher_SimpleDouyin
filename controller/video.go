@@ -15,6 +15,8 @@ import (
 
 type VideoController interface {
 	Feed(c *gin.Context)
+	PublishAction(c *gin.Context)
+
 }
 
 type videoController struct {
