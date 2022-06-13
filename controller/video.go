@@ -4,6 +4,7 @@ import (
 	"ByteGopher_SimpleDouyin/dao"
 	"ByteGopher_SimpleDouyin/model"
 	"ByteGopher_SimpleDouyin/utils"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -218,16 +219,20 @@ func (controller *videoController) PublishAction(c *gin.Context) {
 		id = utils.RandRangeIn(10000000, 99999999)
 	}
 	// 视频先保存到本地
-	c.SaveUploadedFile(data, "/tmp/${id}.mp4")
+	localPath := fmt.Sprintf("%d.mp4",id)
+	log.Println(localPath)
+	c.SaveUploadedFile(data, localPath)
 
 	//TODO: 获取封面url 目前封面暂定一个固定的图
 	coverUrl := "http://cdn1.pic.y1ng.vip/uPic/IMG_3567.JPG"
 
 	// 上传至七牛云
-	retKey, err := utils.QiniuUpload("video/${id}.mp4", "/tmp/${id}.mp4")
+	remotePath := fmt.Sprintf("video/%d.mp4", id)
+	retKey, err := utils.QiniuUpload(remotePath, localPath)
+	log.Println(retKey)
 
 	// 无论远程oss上传是否成功 都删除本地文件
-	utils.DeleteFile("/tmp/${id}.mp4")
+	utils.DeleteFile(localPath)
 
 	// 如果上传失败则返回
 	if err != nil {
@@ -238,8 +243,8 @@ func (controller *videoController) PublishAction(c *gin.Context) {
 		c.JSON(200, res)
 		return
 	}
-
-	video := makeVideoModel(int64(id), userId.(int64), retKey, coverUrl, FavoriteCount, CommentCount, title)
+	playUrl := "http://mydouyin.y1ng.vip/"+retKey
+	video := makeVideoModel(int64(id), userId.(int64), 	playUrl, coverUrl, FavoriteCount, CommentCount, title)
 
 	// 插入数据到数据库
 	err = controller.videoDao.AddVideoModel(&video)

@@ -21,12 +21,14 @@ func AuthMiddleware() gin.HandlerFunc {
     var tokenString = ""
 		
 		tokenQuery := c.Query("token")
+		log.Println("tokenQuery", tokenQuery)
 		tokenForm := c.PostForm("token")
+		log.Println("tokenForm", tokenForm)
 		if tokenQuery != "" {
 			tokenString = tokenQuery
 		} 
 		if tokenForm != "" {
-			tokenString = tokenQuery
+			tokenString = tokenForm
 		}
 
 		//validate token formate
