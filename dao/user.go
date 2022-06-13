@@ -22,12 +22,8 @@ func NewUserDao() UserDao {
 	return &userDao{}
 }
 
+
 func (dao *userDao) GetUserModelByID(id int) (*model.UserModel, error) {
-	Wg.Add(1)
-	defer Wg.Wait()
-
-	go CountUsers(int64(id))
-
 
 	var m model.UserModel
 	if err := MysqlDb.Table("user").Where("user_id = ?", id).Find(&m).Error; err != nil {
@@ -37,6 +33,12 @@ func (dao *userDao) GetUserModelByID(id int) (*model.UserModel, error) {
 }
 
 func (dao *userDao) GetCommonUserByID(id int64) (*model.User, error) {
+	Wg.Add(1)
+	defer Wg.Wait()
+
+	go CountUsers(id)
+
+
 	var m model.User
 	if err := MysqlDb.Table("user").Where("user_id = ?", id).Find(&m).Error; err != nil {
 		return nil, err
