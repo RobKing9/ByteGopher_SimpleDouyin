@@ -56,7 +56,11 @@ func (dao *userDao) GetUserByName(username string) (*model.UserModel, error) {
 
 func Test(m *model.UserModel) {
 	fmt.Println("push test")
+	//<<<<<<< HEAD
 	fmt.Println("local test")
+	//=======
+	//	fmt.Println("origin test")
+	//>>>>>>> origin/dev
 }
 
 func (dao *userDao) AddUserModel(m *model.UserModel) error {
