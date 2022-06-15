@@ -4,32 +4,36 @@ import (
 	"ByteGopher_SimpleDouyin/dao"
 	"ByteGopher_SimpleDouyin/model"
 	"ByteGopher_SimpleDouyin/utils"
-	"log"
-
+	//<<<<<<< Updated upstream
+	//=======
+	"fmt"
 	"github.com/gin-gonic/gin"
+	//>>>>>>> Stashed changes
+	"log"
 )
 
 /*
 	middleware包 存放中间件
 */
 
-
 func AuthMiddleware() gin.HandlerFunc {
-	//fmt.Println("进入中间件了")
 	return func(c *gin.Context) {
+		fmt.Println("进入中间件了")
 		var authFlag = false
-    var tokenString = ""
-		
+		var tokenString = ""
+
 		tokenQuery := c.Query("token")
 		log.Println("tokenQuery", tokenQuery)
 		tokenForm := c.PostForm("token")
 		log.Println("tokenForm", tokenForm)
 		if tokenQuery != "" {
 			tokenString = tokenQuery
-		} 
+		}
 		if tokenForm != "" {
 			tokenString = tokenForm
 		}
+
+		log.Println(tokenString)
 
 		//validate token formate
 		if tokenString == "" {

@@ -17,7 +17,10 @@ import (
 type VideoController interface {
 	Feed(c *gin.Context)
 	PublishAction(c *gin.Context)
+	//<<<<<<< Updated upstream
 
+	PublishList(c *gin.Context)
+	//>>>>>>> Stashed changes
 }
 
 type videoController struct {
@@ -30,19 +33,19 @@ func NewVideoController() VideoController {
 	}
 }
 
-func feedDBError(err error) model.FeedResponse{
-		log.Println("数据库错误")
-    return model.FeedResponse{
-			RespModel: model.RespModel{
-				StatusCode: -1,
-				StatusMsg:  err.Error(),
-			},
-			VideoList: nil,
-			NextTime:  0,
-		}
+func feedDBError(err error) model.FeedResponse {
+	log.Println("数据库错误")
+	return model.FeedResponse{
+		RespModel: model.RespModel{
+			StatusCode: -1,
+			StatusMsg:  err.Error(),
+		},
+		VideoList: nil,
+		NextTime:  0,
+	}
 }
 
-func (controller videoController)videoModels2Videos(videoModels []model.VideoModel, myUserID int64) ([]model.Video, error){
+func (controller videoController) videoModels2Videos(videoModels []model.VideoModel, myUserID int64) ([]model.Video, error) {
 	videoList := make([]model.Video, 0)
 	// 未登录的处理逻辑
 	if myUserID == -1 {
@@ -98,8 +101,12 @@ func (controller videoController)videoModels2Videos(videoModels []model.VideoMod
 			CoverUrl:      v.CoverURL,
 			FavoriteCount: v.FavoriteCount,
 			CommentCount:  v.CommentCount,
-			IsFavorite:    isFavorite,
-			Title:         v.Title,
+			//<<<<<<< Updated upstream
+			IsFavorite: isFavorite,
+			Title:      v.Title,
+			//=======
+			//			IsFavorite:    false,
+			//>>>>>>> Stashed changes
 		}
 
 		videoList = append(videoList, video)
@@ -111,11 +118,11 @@ func (controller *videoController) Feed(c *gin.Context) {
 	latestTime := c.Query("latest_time")
 	// 获取当前登录用户的UserID，若未登录则=-1
 	var myUserID int64
-	myUserID = -1 
+	myUserID = -1
 	userid, _ := c.Get("userid")
 	if userid != nil {
 		myUserID = userid.(int64)
-		log.Println("myUserID:", myUserID )
+		log.Println("myUserID:", myUserID)
 	}
 
 	videoModels, err := controller.videoDao.GetVideoModels(latestTime)
@@ -131,9 +138,9 @@ func (controller *videoController) Feed(c *gin.Context) {
 	// nextTime，若当前视频列表不为空，则返回投稿最早的视频的发布时间
 	var nextTime int64
 	if len(videoModels) > 0 {
-		nextTime = videoModels[len(videoModels) - 1].PublishTime.Unix()
+		nextTime = videoModels[len(videoModels)-1].PublishTime.Unix()
 	} else {
-		nextTime = time.Now().Unix() 
+		nextTime = time.Now().Unix()
 	}
 
 	// 将videoModels转化为videoList，返回给前端
@@ -149,7 +156,7 @@ func (controller *videoController) Feed(c *gin.Context) {
 			StatusMsg:  "获取视频成功",
 		},
 		VideoList: videoList,
-		NextTime: nextTime,
+		NextTime:  nextTime,
 	}
 	log.Println("视频流返回成功")
 	c.JSON(http.StatusOK, feedResponse)
@@ -219,7 +226,7 @@ func (controller *videoController) PublishAction(c *gin.Context) {
 		id = utils.RandRangeIn(10000000, 99999999)
 	}
 	// 视频先保存到本地
-	localPath := fmt.Sprintf("%d.mp4",id)
+	localPath := fmt.Sprintf("%d.mp4", id)
 	log.Println(localPath)
 	c.SaveUploadedFile(data, localPath)
 
@@ -243,8 +250,8 @@ func (controller *videoController) PublishAction(c *gin.Context) {
 		c.JSON(200, res)
 		return
 	}
-	playUrl := "http://mydouyin.y1ng.vip/"+retKey
-	video := makeVideoModel(int64(id), userId.(int64), 	playUrl, coverUrl, FavoriteCount, CommentCount, title)
+	playUrl := "http://mydouyin.y1ng.vip/" + retKey
+	video := makeVideoModel(int64(id), userId.(int64), playUrl, coverUrl, FavoriteCount, CommentCount, title)
 
 	// 插入数据到数据库
 	err = controller.videoDao.AddVideoModel(&video)
@@ -290,5 +297,3 @@ func (controller *videoController) PublishList(c *gin.Context) {
 	}
 	c.JSON(200, res)
 }
-
-

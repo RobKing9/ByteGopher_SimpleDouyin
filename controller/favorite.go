@@ -53,6 +53,7 @@ func (fc *favoriteController) FavoriteAction(c *gin.Context) {
 				StatusMsg:  "no permission",
 			},
 		})
+		log.Println("请先登录！！！！！")
 		return
 	}
 	strUserId, _ := c.Get("userid")
