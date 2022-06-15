@@ -15,7 +15,6 @@ func main() {
 	//初始化数据库
 	// dao.InitMysql()
 	dao.InitMysql()
-
 	//设置路由
 	r := gin.Default()
 	r = router.CollectRouter(r)

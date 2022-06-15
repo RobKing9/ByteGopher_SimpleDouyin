@@ -3,7 +3,6 @@ package router
 import (
 	"ByteGopher_SimpleDouyin/controller"
 	"ByteGopher_SimpleDouyin/middleware"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,14 +13,7 @@ import (
 func CollectRouter(r *gin.Engine) *gin.Engine {
 	douyin := r.Group("/douyin")
 	{
-		/*test*/
-		douyin.GET("/hello", func(c *gin.Context) {
-			//将发送的信息封装成JSON发送给浏览器
-			c.JSON(http.StatusOK, gin.H{
-				//这是我们定义的数据
-				"message": "hi",
-			})
-		})
+
 		/*
 			基础接口
 		*/
@@ -42,9 +34,8 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		//发布视频接口
 		publish := douyin.Group("/publish", middleware.AuthMiddleware())
 		{
-			// videoController := controller.NewVideoController()
-			publish.POST("/action/", videoController.PublishAction)
-			publish.GET("/list")
+			publish.POST("/action/", controller.NewVideoController().PublishAction)
+			publish.GET("/list", controller.NewVideoController().PublishList)
 		}
 
 		/*
@@ -57,7 +48,7 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 			//赞操作
 			favorite.POST("/action/", favoritesController.FavoriteAction)
 			//赞列表
-			favorite.GET("/list", favoritesController.GetFavouriteList)
+			favorite.GET("/list/", favoritesController.GetFavouriteList)
 		}
 		//评论接口
 		comment := douyin.Group("/comment", middleware.AuthMiddleware())
