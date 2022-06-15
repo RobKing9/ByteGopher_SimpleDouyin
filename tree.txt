@@ -1,0 +1,44 @@
+.
+|-- Dockerfile
+|-- README.md
+|-- controller
+|   |-- comment.go
+|   |-- favorite.go
+|   |-- relation.go
+|   |-- user.go
+|   `-- video.go
+|-- dao
+|   |-- comment.go
+|   |-- favorite.go
+|   |-- mysql.go
+|   |-- relation.go
+|   |-- user.go
+|   `-- video.go
+|-- go.mod
+|-- go.sum
+|-- main.go
+|-- middleware
+|   `-- AuthMiddleware.go
+|-- model
+|   |-- comment.go
+|   |-- common.go
+|   |-- favorite.go
+|   |-- follow.go
+|   |-- user.go
+|   `-- video.go
+|-- router
+|   `-- router.go
+|-- tmp
+|   |-- runner-build.exe
+|   `-- runner-build.exe~
+|-- tree.txt
+`-- utils
+    |-- convertVideoModelListToVideoList.go
+    |-- deleteFile.go
+    |-- format.go
+    |-- jwt.go
+    |-- qiniuUpload.go
+    |-- randNum.go
+    `-- timetool.go
+
+7 directories, 34 files
