@@ -2,7 +2,6 @@ package dao
 
 import (
 	"ByteGopher_SimpleDouyin/model"
-	"fmt"
 )
 
 type UserDao interface {
@@ -28,7 +27,6 @@ func (dao *userDao) GetUserModelByID(id int) (*model.UserModel, error) {
 }
 
 func (dao *userDao) GetCommonUserByID(id int64) (*model.User, error) {
-	//<<<<<<< Updated upstream
 	Wg.Add(1)
 	defer Wg.Wait()
 
@@ -52,15 +50,6 @@ func (dao *userDao) GetUserByName(username string) (*model.UserModel, error) {
 		return nil, err
 	}
 	return &m, nil
-}
-
-func Test(m *model.UserModel) {
-	fmt.Println("push test")
-	//<<<<<<< HEAD
-	fmt.Println("local test")
-	//=======
-	//	fmt.Println("origin test")
-	//>>>>>>> origin/dev
 }
 
 func (dao *userDao) AddUserModel(m *model.UserModel) error {

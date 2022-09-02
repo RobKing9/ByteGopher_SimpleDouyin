@@ -72,17 +72,6 @@ func (controller userController) Login(c *gin.Context) {
 	username := c.Query("username")
 	pwd := c.Query("password")
 
-	//数据验证
-	//密码必须超过六位
-	// if len(psd) < 6 {
-	// 	c.JSON(http.StatusUnprocessableEntity, gin.H{
-	// 		"error": "密码必须超过六位！",
-	// 	})
-	// 	log.Println("密码必须超过六位！")
-	// 	return
-	// }
-	//判断手机号是否存在
-
 	u, err := controller.userDao.GetUserByName(username)
 	// db.Where("user_name=?", username).First(&u)
 	if err != nil {
@@ -187,17 +176,14 @@ func (controller userController) Register(c *gin.Context) {
 	rand.Seed(time.Now().UnixNano())
 
 	id := rand.Int63() // 生成比较大的随机数
+
 	u := model.UserModel{
 		UserID:        id,
 		UserName:      username,
 		Password:      string(hasedpsw),
 		FollowCount:   0,
 		FollowerCount: 0,
-		//IsFollow:      false,
 	}
-	// db.AutoMigrate(model.User{})
-	//创建此用户
-	// db.Create(&u)
 	controller.userDao.AddUserModel(&u)
 	//返回token
 	token, err := utils.ReleaseToken(&u)

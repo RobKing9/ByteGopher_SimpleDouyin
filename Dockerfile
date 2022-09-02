@@ -6,7 +6,9 @@ WORKDIR /app/demo
 
 COPY . .
 
-RUN GOPROXY="https://goproxy.io" GO111MODULE=on go build main.go
+RUN GOPROXY="https://goproxy.io"
+GO111MODULE=on
+go build main.go
 
 EXPOSE 9999
 

@@ -4,9 +4,7 @@ import (
 	"ByteGopher_SimpleDouyin/dao"
 	"ByteGopher_SimpleDouyin/model"
 	"ByteGopher_SimpleDouyin/utils"
-	//<<<<<<< Updated upstream
-	//=======
-	"fmt"
+
 	"github.com/gin-gonic/gin"
 	//>>>>>>> Stashed changes
 	"log"
@@ -18,7 +16,7 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Println("进入中间件了")
+		//fmt.Println("进入中间件了")
 		var authFlag = false
 		var tokenString = ""
 

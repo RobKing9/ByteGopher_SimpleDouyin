@@ -20,6 +20,7 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 		//视频流接口
 		videoController := controller.NewVideoController()
 		douyin.GET("/feed", middleware.AuthMiddleware(), videoController.Feed)
+
 		//用户组
 		user := douyin.Group("/user")
 		{
@@ -31,6 +32,7 @@ func CollectRouter(r *gin.Engine) *gin.Engine {
 			//用户注册接口
 			user.POST("/register/", userController.Register)
 		}
+
 		//发布视频接口
 		publish := douyin.Group("/publish", middleware.AuthMiddleware())
 		{
